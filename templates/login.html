@@ -1,99 +1,11 @@
-<!DOCTYPE html>
-<html lang="pl">
-<head>
-    <meta charset="UTF-8">
-    <title>Logowanie</title>
-    <style>
-        body {
-            font-family: "Calibri", sans-serif;
-            margin: 0;
-            padding: 0;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: linear-gradient(to right, #6B8E23, #808000, #556B2F);
-        }
-
-        .login-box {
-            background-color: #556B2F; /* ciemnozielony box */
-            padding: 40px 30px;
-            border-radius: 20px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.5);
-            width: 800px; /* stała szerokość */
-            text-align: center;
-        }
-
-        h2 {
-            margin-bottom: 25px;
-            font-size: 2em;
-            color: #fff;
-        }
-
-        .input-group {
-            position: relative;
-            margin-bottom: 20px;
-        }
-
-        .input-group input {
-            width: 100%; /* teraz idealnie w boxie */
-            padding: 12px 40px;
-            border: none;
-            border-radius: 8px;
-            font-size: 1em;
-            box-sizing: border-box; /* ważne, żeby padding nie powiększał szerokości */
-        }
-
-        .input-group span {
-            position: absolute;
-            left: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #fff;
-            font-size: 1.2em;
-        }
-
-        input[type="submit"] {
-            width: 100%;
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
-            background-color: #fff;
-            color: #556B2F;
-            font-size: 1.1em;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        input[type="submit"]:hover {
-            background-color: #f0f0f0;
-            transform: translateY(-2px);
-        }
-
-        .message {
-            margin-top: 15px;
-            font-size: 0.9em;
-            color: #ffd700;
-        }
-    </style>
-</head>
-<body>
-    <div class="login-box">
-        <h2>Zaloguj się</h2>
-        <form method="POST">
-            <div class="input-group">
-                <span>👤</span>
-                <input type="text" name="username" placeholder="Nazwa użytkownika" required>
-            </div>
-            <div class="input-group">
-                <span>🔒</span>
-                <input type="password" name="password" placeholder="Hasło" required>
-            </div>
-            <input type="submit" value="Zaloguj">
-        </form>
-        {% if message %}
-            <div class="message">{{ message }}</div>
-        {% endif %}
-    </div>
-</body>
-</html>
+{% extends "base.html" %}
+{% block content %}
+<div style="max-width: 400px; margin: auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+    <h2>Zaloguj się</h2>
+    <form method="POST">
+        <input type="text" name="username" placeholder="Login" required>
+        <input type="password" name="password" placeholder="Hasło" required>
+        <button type="submit" class="btn" style="width:100%">Wchodzę!</button>
+    </form>
+</div>
+{% endblock %}

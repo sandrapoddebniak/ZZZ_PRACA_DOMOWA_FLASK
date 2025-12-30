@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+<div style="max-width: 400px; margin: auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+    <h2>Załóż konto</h2>
+    <form method="POST">
+        <input type="text" name="username" placeholder="Twój login" required>
+        <input type="password" name="password" placeholder="Twoje hasło" required>
+        <button type="submit" class="btn" style="width:100%">Zarejestruj się</button>
+    </form>
+</div>
+{% endblock %}

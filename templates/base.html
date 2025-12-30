@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Sandi's Book Club</title>
+    <style>
+        body { font-family: 'Calibri', sans-serif; background-color: #fffbf2; color: #5d4a27; margin: 0; }
+        nav { background-color: #af8c4b; padding: 1rem; display: flex; justify-content: space-between; align-items: center; color: white; }
+        nav a { color: white; margin: 0 15px; text-decoration: none; font-weight: bold; }
+        nav a:hover { color: #ffd87e; }
+        .container { max-width: 1100px; margin: 20px auto; padding: 20px; }
+        .hero { text-align: center; padding: 50px; background-color: #faca83; border-radius: 20px; border: 2px solid #af8c4b; margin-bottom: 30px; }
+        .book-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+        .card { background: white; padding: 20px; border-radius: 15px; border-bottom: 5px solid #af8c4b; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .card img { width: 100%; border-radius: 10px; }
+        .btn { background-color: #af8c4b; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; text-decoration: none; display: inline-block; font-weight: bold; }
+        .btn:hover { background-color: #ffd87e; color: #5d4a27; }
+        input, textarea, select { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #faca83; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <nav>
+        <h2 style="margin:0">Sandi's Book Club</h2>
+        <div>
+            <a href="/">Główna</a>
+            <a href="/about">O mnie</a>
+            {% if session.get('user') %}
+                <a href="/dashboard">Dashboard</a>
+                <a href="/logout">Wyloguj ({{ session['user'] }})</a>
+            {% else %}
+                <a href="/login">Login</a>
+                <a href="/register">Rejestracja</a>
+            {% endif %}
+        </div>
+    </nav>
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>
