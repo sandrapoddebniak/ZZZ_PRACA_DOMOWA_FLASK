@@ -22,7 +22,7 @@ nav {
     background: white;
     padding: 20px 0;
     display: flex;
-    justify-content: center; /* Centrowanie w poziomie */
+    justify-content: center;
     box-shadow: 0 2px 10px rgba(0,0,0,0.05);
     position: sticky;
     top: 0;
@@ -31,29 +31,29 @@ nav {
 
 .nav-links {
     display: flex;
-    gap: 40px; /* Duży odstęp między opcjami dla minimalizmu */
+    gap: 40px;
     align-items: center;
 }
 
 .nav-links a {
     text-decoration: none;
-    color: #5d4a27; /* Twój ciemny brąz */
+    color: #5d4a27;
     font-weight: bold;
     text-transform: uppercase;
     font-size: 0.9em;
     letter-spacing: 1px;
     transition: 0.3s;
+    padding-bottom: 5px;
 }
 
 .nav-links a:hover {
-    color: #af8c4b; /* Złoty kolor przy najechaniu */
+    color: #af8c4b;
 }
 
-/* Specjalne wyróżnienie dla Dashboardu, żeby rzucał się w oczy */
+/* Klasa aktywnego podświetlenia */
 .special-link {
     color: #af8c4b !important;
     border-bottom: 2px solid #af8c4b;
-    padding-bottom: 5px;
 }
 
 .container {
@@ -89,10 +89,15 @@ nav {
     height: 350px;
     object-fit: cover;
     border-radius: 5px;
+    filter: sepia(0.1);
+    transition: 0.3s;
+}
+
+.card:hover img {
+    filter: sepia(0);
 }
 
 /* MODAL */
-
 .modal {
     display: none;
     position: fixed;
@@ -122,6 +127,7 @@ nav {
     cursor: pointer;
     color: var(--gold);
 }
+
 /* STOPKA */
 footer {
     position: fixed;
@@ -133,6 +139,7 @@ footer {
     padding: 15px 0;
     font-size: 0.9em;
     border-top: 3px solid var(--gold);
+    box-shadow: 0 -5px 15px rgba(0,0,0,0.05);
 }
 </style>
 </head>
@@ -140,25 +147,25 @@ footer {
 
 <nav>
     <div class="nav-links">
-        <a href="/">Główna</a>
-        <a href="/about-me">O mnie</a>
-        <a href="/contact">Kontakt</a>
+        <a href="/" class="{{ 'special-link' if request.endpoint == 'index' }}">Główna</a>
+        <a href="/about-me" class="{{ 'special-link' if request.endpoint == 'about' }}">O mnie</a>
+        <a href="/contact" class="{{ 'special-link' if request.endpoint == 'contact' }}">Kontakt</a>
         
     {% if session.get('user') %}
-        <a href="/dashboard" class="special-link">Panel</a>
+        <a href="/dashboard" class="{{ 'special-link' if request.endpoint == 'dashboard' }}">Panel</a>
         <span style="font-size: 0.8em; color: var(--gold); margin-left: 10px;">
             Cześć, <strong>{{ session['user'] }}</strong>!
          </span>
         <a href="/logout" style="font-size: 0.8em; opacity: 0.7; text-decoration: none;">(Wyloguj)</a>
     {% else %}
-        <a href="/login">Logowanie</a>
+        <a href="/login" class="{{ 'special-link' if request.endpoint == 'login' }}">Logowanie</a>
     {% endif %}
     </div>
 </nav>
 
 {% if session.get('user') %}
 <div style="background: #fdf2d5; text-align: center; padding: 10px; font-size: 1em; border-bottom: 2px solid #faca83; border-top: 2px solid #faca83;">
-    Jesteś zalogowany 
+    Jesteś zalogowany jako <strong>{{ session['user'] }}</strong>
 </div>
 {% endif %}
 
@@ -169,15 +176,12 @@ footer {
 <div id="bookModal" class="modal">
     <div class="modal-content">
         <span class="close" onclick="closeModal()">&times;</span>
-
-        <div style="display:flex; gap:20px;">
+        <div style="display:flex; gap:20px; flex-wrap: wrap;">
             <img id="modalImg" style="width:180px; border-radius:10px; object-fit: cover;">
-            <div>
+            <div style="flex: 1; min-width: 250px;">
                 <h2 id="modalTitle" style="color:var(--gold); margin-top: 0;"></h2>
                 <strong id="modalAuthor"></strong>
-                
                 <div id="modalDesc" style="margin-top: 15px; line-height: 1.6;"></div>
-
                 <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
                 <h4 style="color: var(--gold); margin-bottom: 10px;">Opinie klubowiczów:</h4>
                 <div id="modalComments" style="font-size: 0.9em; line-height: 1.4;"></div>
@@ -188,7 +192,7 @@ footer {
 </div>
 
 <footer>
-    <strong>Sandi's Book Club</strong> © 2025
+    <strong>Sandi's Book Club</strong> © 2026
 </footer>
 
 <script>
@@ -225,7 +229,6 @@ function openModal(title, author, desc, img) {
     document.body.style.overflow = "hidden";
 }
 
-// TA FUNKCJA BYŁA POTRZEBNA:
 function closeModal() {
     document.getElementById('bookModal').style.display = "none";
     document.body.style.overflow = "auto";
@@ -236,9 +239,9 @@ window.onclick = function(event) {
     if (event.target === modal) closeModal();
 };
 </script>
-</body><script>
-// USTAWIENIE DATY SPOTKANIA (Rok, Miesiąc-1, Dzień, Godzina, Minuta)
-// Uwaga: Miesiące liczymy od 0 (Styczeń = 0, Luty = 1 itd.)
+
+<script>
+// LICZNIK SPOTKANIA
 const meetingDate = new Date(2026, 0, 15, 19, 0, 0).getTime(); 
 
 const countdown = setInterval(function() {
@@ -250,14 +253,22 @@ const countdown = setInterval(function() {
     const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
     const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-    document.getElementById("days").innerText = days.toString().padStart(2, '0');
-    document.getElementById("hours").innerText = hours.toString().padStart(2, '0');
-    document.getElementById("minutes").innerText = minutes.toString().padStart(2, '0');
-    document.getElementById("seconds").innerText = seconds.toString().padStart(2, '0');
+    const dEl = document.getElementById("days");
+    const hEl = document.getElementById("hours");
+    const mEl = document.getElementById("minutes");
+    const sEl = document.getElementById("seconds");
+
+    if(dEl) dEl.innerText = days.toString().padStart(2, '0');
+    if(hEl) hEl.innerText = hours.toString().padStart(2, '0');
+    if(mEl) mEl.innerText = minutes.toString().padStart(2, '0');
+    if(sEl) sEl.innerText = seconds.toString().padStart(2, '0');
 
     if (distance < 0) {
         clearInterval(countdown);
-        document.getElementById("countdown-section").innerHTML = "<h2 style='color:var(--gold); font-family:Georgia;'>Spotkanie właśnie trwa! 🕯️</h2>";
+        const section = document.getElementById("countdown-section");
+        if(section) section.innerHTML = "<h2 style='color:var(--gold); font-family:Georgia;'>Spotkanie właśnie trwa! 🕯️</h2>";
     }
 }, 1000);
 </script>
+</body>
+</html>

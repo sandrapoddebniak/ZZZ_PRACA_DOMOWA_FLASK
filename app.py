@@ -23,6 +23,7 @@ class Review(db.Model):
     book = db.Column(db.String(100))
     rating = db.Column(db.Integer)
     text = db.Column(db.Text)
+    date = db.Column(db.String(20), default="10.01.2026")
 
 class Message(db.Model):
     id = db.Column(db.Integer, primary_key=True)

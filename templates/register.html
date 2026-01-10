@@ -2,14 +2,14 @@
 {% block content %}
 <div style="max-width: 400px; margin: auto;">
     <div class="card-box">
-        <h2 style="text-align: center;">Zaloguj się</h2>
+        <h2 style="text-align: center;">Dołącz do klubu</h2>
         <form method="POST">
             <input type="text" name="username" placeholder="Twój login" required>
             <input type="password" name="password" placeholder="Hasło" required>
-            <button type="submit" class="btn">Wejdź do klubu</button>
+            <button type="submit" class="btn">Zarejestruj się</button>
         </form>
         <p style="text-align: center; font-size: 0.9em; margin-top: 15px;">
-            Nie masz konta? <a href="/register" style="color: var(--gold)">Zarejestruj się</a>
+    Masz już konto? <a href="{{ url_for('login') }}" style="color: var(--gold)">Zaloguj się tutaj</a>
         </p>
     </div>
 </div>

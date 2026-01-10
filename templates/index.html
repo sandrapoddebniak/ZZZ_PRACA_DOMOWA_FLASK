@@ -38,7 +38,7 @@
     </div>
 </div>
 
-<h2 style="border-left: 5px solid #af8c4b; padding-left: 15px;">📚 Omawiane teraz</h2>
+<h2 style="border-left: 5px solid #af8c4b; padding-left: 15px; margin-bottom: 25px;"> Omawiane teraz</h2>
 <div class="book-grid">
     {% for b in discussed %}
     <div class="card" onclick="openModal('{{ b.title|replace("'", "\\'") }}', '{{ b.author|replace("'", "\\'") }}', '{{ b.desc|replace("'", "\\'") }}', '{{ b.img }}')">
@@ -49,15 +49,17 @@
     {% endfor %}
 </div>
 
-<h2 style="border-left: 5px solid #ffd87e; padding-left: 15px; margin-top: 50px;">⏳ Nadchodzące lektury</h2>
-<div class="book-grid">
-    {% for b in upcoming %}
-    <div class="card" style="border-bottom-color: #ffd87e;" onclick="openModal('{{ b.title|replace("'", "\\'") }}', '{{ b.author|replace("'", "\\'") }}', '{{ b.desc|replace("'", "\\'") }}', '{{ b.img }}')">
-        <img src="{{ b.img }}">
-        <h3>{{ b.title }}</h3>
-        <p><strong>{{ b.author }}</strong></p>
+<div style="background: #fdfaf0; margin: 60px -40px 0 -40px; padding: 60px 40px; border-top: 1px solid #f2e6c9; border-bottom: 1px solid #f2e6c9;">
+    <h2 style="border-left: 5px solid #ffd87e; padding-left: 15px; margin-bottom: 30px;"> Nadchodzące lektury</h2>
+    <div class="book-grid">
+        {% for b in upcoming %}
+        <div class="card" style="border-bottom-color: #ffd87e;" onclick="openModal('{{ b.title|replace("'", "\\'") }}', '{{ b.author|replace("'", "\\'") }}', '{{ b.desc|replace("'", "\\'") }}', '{{ b.img }}')">
+            <img src="{{ b.img }}">
+            <h3>{{ b.title }}</h3>
+            <p><strong>{{ b.author }}</strong></p>
+        </div>
+        {% endfor %}
     </div>
-    {% endfor %}
 </div>
 
 {% endblock %}
