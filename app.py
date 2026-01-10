@@ -45,7 +45,11 @@ books_discussed = [
     {"title": "Kwiaty dla Algernona", "author": "Daniel Keyes", "img": "https://s.lubimyczytac.pl/upload/books/4875000/4875015/732927-352x500.jpg", "desc": "Trzydziestodwuletni Charlie Gordon jest niepełnosprawny intelektualnie..."},
     {"title": "Wiek czerwonych mrówek", "author": "Tania Pijankowa", "img": "https://s.lubimyczytac.pl/upload/books/5048000/5048595/1065896-352x500.jpg", "desc": "Przejmująca powieść o Wielkim Głodzie w Ukrainie..."},
     {"title": "Człowiek w poszukiwaniu sensu", "author": "Viktor Frankl", "img": "https://ecsmedia.pl/cdn-cgi/image/format=webp,width=544,height=544,/c/czlowiek-w-poszukiwaniu-sensu-b-iext199921942.jpg", "desc": "Wstrząsający esej o pobycie w Auschwitz..."},
-    {"title": "Osobiste doświadczenie", "author": "Kenzaburo Oe", "img": "https://s.lubimyczytac.pl/upload/books/5029000/5029192/1011130-352x500.jpg", "desc": "Noblista stawia pytania o odpowiedzialność za drugiego człowieka..."}
+    {"title": "Osobiste doświadczenie", "author": "Kenzaburo Oe", "img": "https://s.lubimyczytac.pl/upload/books/5029000/5029192/1011130-352x500.jpg", "desc": "Noblista stawia pytania o odpowiedzialność za drugiego człowieka..."},
+    {"title": "Lolita", "author": "Vladimir Nabokov", "img": "https://ecsmedia.pl/cdn-cgi/image/format=webp,width=544,height=544,/c/lolita-b-iext202832602.jpg", "desc": "Humbert Humbert – uczony, esteta i romantyk – zakochuje się bez pamięci w Dolores Haze..."},
+    {"title": "27 śmierci Toby’ego Obeda", "author": "Joanna Gierak-Onoszko", "img": "https://ecsmedia.pl/cdn-cgi/image/format=webp,width=544,height=544,/c/27-smierci-toby-ego-obeda-b-iext199924734.jpg", "desc": "To też jest Kanada: siedem zapałek w słoiku, sny o czubkach drzew, powiewające na wietrze czerwone suknie..."},
+    {"title": "Wyspa", "author": "Aldous Huxley", "img": "https://ecsmedia.pl/cdn-cgi/image/format=webp,width=544,height=544,/c/wyspa-b-iext198279066.jpg", "desc": "W miejsce ponurej satyry 'Wyspa' oferuje idylliczny obraz społeczności żyjącej w izolacji, rządzącej się prawami wyprowadzonymi z głębokich przemyśleń filozofii Wschodu. Huxley zaskakuje trafnością niektórych ze swoich przewidywań. Bawi kontrowaniem konsumpcyjnego Zachodu w stosowanej przez wyspiarzy psychologii społecznej i edukacji. W końcu – szokuje antydewocjonalnością i radykalnością niektórych propozycji, m.in. dotyczących sfery seksualnej."
+    }
 ]
 
 books_upcoming = [

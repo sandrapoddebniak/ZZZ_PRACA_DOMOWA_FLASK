@@ -1,57 +1,129 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div style="text-align: center; margin-bottom: 40px;">
-    <h1 style="color: #af8c4b; font-size: 3em;">Sandi's Book Club</h1>
-    <p>
-        Kameralny klub czytelniczy dla tych, którzy szukają
-        sensu, emocji i rozmów bez pośpiechu.
+<style>
+    /* Kontener dla całej sekcji karuzeli */
+    .carousel-container {
+        position: relative;
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 0 50px; /* Miejsce na strzałki po bokach */
+    }
+
+    /* Sama karuzela */
+    .book-carousel {
+        display: flex;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        gap: 30px;
+        padding: 20px 5px;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        scroll-behavior: smooth; /* Płynne przewijanie przy kliknięciu */
+    }
+
+    .book-carousel::-webkit-scrollbar {
+        display: none;
+    }
+
+    .book-carousel .card {
+        flex: 0 0 200px;
+        scroll-snap-align: start;
+        transition: transform 0.3s ease;
+        margin-bottom: 10px;
+    }
+
+    .book-carousel .card:hover {
+        transform: translateY(-5px);
+    }
+
+    /* Styl strzałek */
+    .nav-arrow {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: white;
+        border: 1px solid #f2e6c9;
+        color: #af8c4b;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5em;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        z-index: 10;
+        transition: 0.3s;
+    }
+
+    .nav-arrow:hover {
+        background: #af8c4b;
+        color: white;
+    }
+
+    .arrow-left { left: 0; }
+    .arrow-right { right: 0; }
+</style>
+
+<div style="text-align: center; margin-top: 0; margin-bottom: 50px; overflow: hidden;">
+    <div style="max-width: 100%; margin: 0 auto;">
+        <img src="{{ url_for('static', filename='tlo.png') }}" 
+             alt="Sandi's Book Club" 
+             style="width: 100%; max-height: 500px; object-fit: cover; border-radius: 0;">
+    </div>
+    <p style="margin-top: 25px; font-family: 'Georgia', serif; font-style: italic; color: #5d4a27; font-size: 1.1em; max-width: 700px; margin-left: auto; margin-right: auto;">
+        Kameralny klub czytelniczy dla tych, którzy szukają sensu, emocji i rozmów bez pośpiechu.
     </p>
 </div>
 
-<section style="margin: 50px 0; text-align: center;">
-    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
-        <div style="background: #fffbf2; border: 1px solid #f2e6c9; border-radius: 15px; padding: 20px;">
-            <h2 style="color: #af8c4b; font-size: 2.5em; margin: 0;">{{ discussed|length + upcoming|length }}</h2>
-            <p style="font-family: 'Georgia', serif; color: #5d4a27; margin: 5px 0;">Książek w bibliotece</p>
-        </div>
-        <div style="background: #fffbf2; border: 1px solid #f2e6c9; border-radius: 15px; padding: 20px;">
-            <h2 style="color: #af8c4b; font-size: 2.5em; margin: 0;">{{ users|length }}</h2>
-            <p style="font-family: 'Georgia', serif; color: #5d4a27; margin: 5px 0;">Klubowiczów</p>
-        </div>
-        <div style="background: #fffbf2; border: 1px solid #f2e6c9; border-radius: 15px; padding: 20px;">
-            <h2 style="color: #af8c4b; font-size: 2.5em; margin: 0;">{{ reviews|length }}</h2>
-            <p style="font-family: 'Georgia', serif; color: #5d4a27; margin: 5px 0;">Opinii</p>
-        </div>
-    </div>
-</section>
-
-<div id="countdown-section" style="text-align: center; margin: 40px 0; padding: 20px; background: #fcf6e8; border-radius: 15px; border: 1px solid #f2e6c9;">
-    <h3 style="font-family: 'Georgia', serif; color: #af8c4b; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 2px; font-size: 0.9em;">
-        Następne spotkanie klubu za:
-    </h3>
-    <div id="timer" style="font-family: 'Georgia', serif; color: #5d4a27; font-size: 3em; font-weight: bold; display: flex; justify-content: center; gap: 20px;">
-        <div><span id="days">00</span><small style="display:block; font-size: 0.3em; text-transform: uppercase; color: #af8c4b;">Dni</small></div>
-        <div><span id="hours">00</span><small style="display:block; font-size: 0.3em; text-transform: uppercase; color: #af8c4b;">Godz</small></div>
-        <div><span id="minutes">00</span><small style="display:block; font-size: 0.3em; text-transform: uppercase; color: #af8c4b;">Min</small></div>
-        <div><span id="seconds">00</span><small style="display:block; font-size: 0.3em; text-transform: uppercase; color: #af8c4b;">Sek</small></div>
+<div id="countdown-section" style="text-align: center; margin: 50px 0; padding: 35px; background: #fcf6e8; border-radius: 15px; border: 1px solid #f2e6c9;">
+    <h3 style="font-family: 'Georgia', serif; color: #af8c4b; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 2px; font-size: 0.9em;">Następne spotkanie klubu za:</h3>
+    <div id="timer" style="font-family: 'Georgia', serif; color: #5d4a27; font-size: 3.5em; font-weight: bold; display: flex; justify-content: center; gap: 25px;">
+        <div><span id="days">00</span><small style="display:block; font-size: 0.25em; text-transform: uppercase; color: #af8c4b; margin-top: 5px;">Dni</small></div>
+        <div><span id="hours">00</span><small style="display:block; font-size: 0.25em; text-transform: uppercase; color: #af8c4b; margin-top: 5px;">Godz</small></div>
+        <div><span id="minutes">00</span><small style="display:block; font-size: 0.25em; text-transform: uppercase; color: #af8c4b; margin-top: 5px;">Min</small></div>
+        <div><span id="seconds">00</span><small style="display:block; font-size: 0.25em; text-transform: uppercase; color: #af8c4b; margin-top: 5px;">Sek</small></div>
     </div>
 </div>
 
-<h2 style="border-left: 5px solid #af8c4b; padding-left: 15px; margin-bottom: 25px;"> Omawiane teraz</h2>
-<div class="book-grid">
-    {% for b in discussed %}
-    <div class="card" onclick="openModal('{{ b.title|replace("'", "\\'") }}', '{{ b.author|replace("'", "\\'") }}', '{{ b.desc|replace("'", "\\'") }}', '{{ b.img }}')">
-        <img src="{{ b.img }}">
-        <h3>{{ b.title }}</h3>
-        <p><strong>{{ b.author }}</strong></p>
+<hr style="border: 0; border-top: 1px solid #f2e6c9; margin: 60px 0;">
+
+<h2 style="text-align: center; color: #5d4a27; margin-bottom: 30px; font-family: 'Georgia', serif; font-size: 2em;">
+    <span style="border-bottom: 2px solid #af8c4b; padding-bottom: 10px;">Omawiane teraz</span>
+</h2>
+
+<div class="carousel-container">
+    <button class="nav-arrow arrow-left" onclick="scrollCarousel(-230)">&#8249;</button>
+    
+    <div class="book-carousel" id="bookCarousel">
+        {% for b in discussed %}
+        <div class="card" onclick="openModal('{{ b.title|replace("'", "\\'") }}', '{{ b.author|replace("'", "\\'") }}', '{{ b.desc|replace("'", "\\'") }}', '{{ b.img }}')">
+            <img src="{{ b.img }}" alt="{{ b.title }}">
+            <h3>{{ b.title }}</h3>
+            <p><strong>{{ b.author }}</strong></p>
+        </div>
+        {% endfor %}
     </div>
-    {% endfor %}
+
+    <button class="nav-arrow arrow-right" onclick="scrollCarousel(230)">&#8250;</button>
 </div>
 
-<div style="background: #fdfaf0; margin: 60px -40px 0 -40px; padding: 60px 40px; border-top: 1px solid #f2e6c9; border-bottom: 1px solid #f2e6c9;">
-    <h2 style="border-left: 5px solid #ffd87e; padding-left: 15px; margin-bottom: 30px;"> Nadchodzące lektury</h2>
-    <div class="book-grid">
+<script>
+    function scrollCarousel(distance) {
+        document.getElementById('bookCarousel').scrollBy({
+            left: distance,
+            behavior: 'smooth'
+        });
+    }
+</script>
+
+<div style="background: #fdfaf0; margin: 80px -40px 0 -40px; padding: 60px 40px; border-top: 1px solid #f2e6c9; border-bottom: 1px solid #f2e6c9;">
+    <h2 style="text-align: center; color: #5d4a27; margin-bottom: 45px; font-family: 'Georgia', serif; font-size: 2em;">
+        <span style="border-bottom: 2px solid #ffd87e; padding-bottom: 10px;">Nadchodzące lektury</span>
+    </h2>
+    <div class="book-grid" style="justify-content: center;">
         {% for b in upcoming %}
         <div class="card" style="border-bottom-color: #ffd87e;" onclick="openModal('{{ b.title|replace("'", "\\'") }}', '{{ b.author|replace("'", "\\'") }}', '{{ b.desc|replace("'", "\\'") }}', '{{ b.img }}')">
             <img src="{{ b.img }}">
@@ -61,5 +133,20 @@
         {% endfor %}
     </div>
 </div>
+
+<section style="margin: 80px 0 40px 0; text-align: center; display: flex; justify-content: center; gap: 40px; flex-wrap: wrap;">
+    <div style="background: white; border: 1px solid #f2e6c9; border-radius: 50%; width: 160px; height: 160px; display: flex; flex-direction: column; justify-content: center; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.03);">
+        <h2 style="color: #af8c4b; font-size: 2.2em; margin: 0;">{{ discussed|length + upcoming|length }}</h2>
+        <p style="font-family: 'Georgia', serif; color: #5d4a27; margin: 5px 0; font-size: 0.75em; text-transform: uppercase; letter-spacing: 1px;">Książek</p>
+    </div>
+    <div style="background: white; border: 2px solid #fcf6e8; border-radius: 50%; width: 160px; height: 160px; display: flex; flex-direction: column; justify-content: center; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.03);">
+        <h2 style="color: #af8c4b; font-size: 2.2em; margin: 0;">{{ users|length }}</h2>
+        <p style="font-family: 'Georgia', serif; color: #5d4a27; margin: 5px 0; font-size: 0.75em; text-transform: uppercase; letter-spacing: 1px;">Klubowiczów</p>
+    </div>
+    <div style="background: white; border: 1px solid #f2e6c9; border-radius: 50%; width: 160px; height: 160px; display: flex; flex-direction: column; justify-content: center; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.03);">
+        <h2 style="color: #af8c4b; font-size: 2.2em; margin: 0;">{{ reviews|length }}</h2>
+        <p style="font-family: 'Georgia', serif; color: #5d4a27; margin: 5px 0; font-size: 0.75em; text-transform: uppercase; letter-spacing: 1px;">Opinii</p>
+    </div>
+</section>
 
 {% endblock %}
