@@ -1,16 +1,70 @@
 {% extends "base.html" %}
 {% block content %}
+
+<style>
+    /* Stylowanie kontenera formularza, aby pasował do kart na stronie głównej */
+    .register-box {
+        background: white;
+        padding: 40px;
+        border-radius: 20px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        border-bottom: 5px solid var(--gold);
+        margin-top: 50px;
+    }
+
+    /* Wygląd pól tekstowych */
+    .register-box input {
+        width: 100%;
+        padding: 12px;
+        margin: 10px 0;
+        border: 1px solid #f2e6c9;
+        border-radius: 10px;
+        font-family: 'Georgia', serif;
+        box-sizing: border-box; /* Ważne: zapobiega wychodzeniu pól poza ramkę */
+    }
+
+    /* Przycisk rejestracji */
+    .btn-reg {
+        background: var(--gold);
+        color: white;
+        border: none;
+        width: 100%;
+        padding: 15px;
+        border-radius: 50px;
+        font-family: 'Georgia', serif;
+        font-weight: bold;
+        cursor: pointer;
+        transition: 0.3s;
+        margin-top: 10px;
+    }
+
+    .btn-reg:hover {
+        background: #5d4a27;
+        transform: translateY(-2px);
+    }
+</style>
+
 <div style="max-width: 400px; margin: auto;">
-    <div class="card-box">
-        <h2 style="text-align: center;">Dołącz do klubu</h2>
+    <div class="register-box">
+        <h2 style="text-align: center; color: #5d4a27; font-family: 'Georgia', serif; margin-top: 0;">Dołącz do klubu ✍️</h2>
+        <p style="text-align: center; color: #7a6a4a; font-size: 0.9em; margin-bottom: 25px;">Zyskaj możliwość oceniania książek!</p>
+        
+        {# Formularz wysyła dane metodą POST do trasy /register w app.py #}
         <form method="POST">
-            <input type="text" name="username" placeholder="Twój login" required>
-            <input type="password" name="password" placeholder="Hasło" required>
-            <button type="submit" class="btn">Zarejestruj się</button>
+            {# Atrybut 'name' jest kluczowy - Python szuka go przez request.form.get('username') #}
+            <input type="text" name="username" placeholder="Wymyśl login" required>
+            
+            {# type="password" sprawia, że znaki są kropkowane #}
+            <input type="password" name="password" placeholder="Wymyśl hasło" required>
+            
+            <button type="submit" class="btn-reg">ZAREJESTRUJ SIĘ</button>
         </form>
-        <p style="text-align: center; font-size: 0.9em; margin-top: 15px;">
-    Masz już konto? <a href="{{ url_for('login') }}" style="color: var(--gold)">Zaloguj się tutaj</a>
+
+        <p style="text-align: center; font-size: 0.9em; margin-top: 20px; color: #5d4a27;">
+            Masz już konto? 
+            <a href="{{ url_for('login') }}" style="color: var(--gold); text-decoration: none; font-weight: bold;">Zaloguj się tutaj</a>
         </p>
     </div>
 </div>
+
 {% endblock %}

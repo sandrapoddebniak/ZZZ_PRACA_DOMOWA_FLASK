@@ -2,8 +2,10 @@
 {% block content %}
 <div style="font-family: 'Georgia', serif; color: #5d4a27;">
 
+    {# GŁÓWNA SEKCJA "O MNIE" - Użycie Flexboxa do układu zdjęcie + tekst #}
     <div style="display: flex; align-items: center; gap: 60px; margin-top: 40px; min-height: 70vh; flex-wrap: wrap;">
         
+        {# LEWA STRONA: Zdjęcie z dekoracyjnym tłem (prostokąt pod spodem) #}
         <div style="flex: 1; min-width: 300px; position: relative;">
             <div style="width: 100%; height: 500px; background-color: #faca83; border-radius: 30px; position: absolute; top: 20px; left: -20px; z-index: -1; opacity: 0.4;"></div>
             <img src="https://i.pinimg.com/1200x/90/67/03/90670322587a688a63ef4eb99e45fae1.jpg" 
@@ -11,10 +13,12 @@
                  style="width: 100%; height: 500px; object-fit: cover; border-radius: 30px; box-shadow: 0 20px 40px rgba(0,0,0,0.15); border: 8px solid white;">
         </div>
 
+        {# PRAWA STRONA: Tekst powitalny i opis #}
         <div style="flex: 1.2; min-width: 350px;">
             <span style="text-transform: uppercase; letter-spacing: 3px; color: #af8c4b; font-weight: bold; font-size: 0.85em; display: block; margin-bottom: 10px;">Est. 2025</span>
             <h1 style="font-size: 3.8em; margin: 0; color: #5d4a27; line-height: 1.1;">
                 Cześć, tu <span style="position: relative; z-index: 1;">Sandra
+                    {# Dekoracyjna linia pod imieniem - zrobiona jako span z absolutną pozycją #}
                     <span style="position: absolute; bottom: 10px; left: 0; width: 100%; height: 15px; background: #ffd87e; z-index: -1; opacity: 0.6;"></span>
                 </span>
             </h1>
@@ -24,9 +28,10 @@
             </p>
             
             <p style="font-size: 1.1em; line-height: 1.7; color: #7a6a4a; margin-bottom: 30px;">
-                Wierzę, że każda przeczytana książka to nowa perspektywa. Moim celem jest stworzenie społeczności, w której możemy dzielić się emocjami, jakie wywołują w nas lektury – od trudnych pytań Viktora Frankla po mroczne zakamarki świata Stephena Kinga.
+                Wierzę, że każda przeczytana książka to nowa perspektywa. Moim celem jest stworzenie społeczności, w której możemy dzielić się emocjami...
             </p>
 
+            {# RAMKA Z CIEKAWOSTKAMI - tzw. "Call to action" lub szybkie fakty #}
             <div style="background: white; padding: 25px; border-radius: 20px; border-left: 5px solid #af8c4b; box-shadow: 0 5px 15px rgba(0,0,0,0.03);">
                 <ul style="list-style: none; padding: 0; margin: 0;">
                     <li style="margin-bottom: 12px;"> <strong>Ulubiony gatunek:</strong> Thriller psychologiczny</li>
@@ -37,8 +42,10 @@
         </div>
     </div>
 
+    {# DOLNA SEKCJA: Trzy karty informacyjne o spotkaniach (Grid-like layout za pomocą Flexbox) #}
     <div style="display: flex; justify-content: space-between; gap: 20px; margin-top: 80px; padding-bottom: 40px;">
 
+         {# Karta 1: Czas spotkań #}
          <div style="flex: 1; background: white; padding: 25px; border-radius: 20px; border-bottom: 5px solid #af8c4b; box-shadow: 0 5px 15px rgba(0,0,0,0.03); text-align: center;">
             <span style="font-size: 2em; display: block; margin-bottom: 10px;">🗓️</span>
             <h3 style="color: #af8c4b; margin: 0 0 10px 0; font-size: 1.1em; text-transform: uppercase;">Kiedy?</h3>
@@ -46,6 +53,7 @@
             <p style="margin: 5px 0 0 0;">22.01.2026 godz. 18:00 – 20:00</p>
         </div>
 
+        {# Karta 2: Lokalizacja #}
         <div style="flex: 1; background: white; padding: 25px; border-radius: 20px; border-bottom: 5px solid #af8c4b; box-shadow: 0 5px 15px rgba(0,0,0,0.03); text-align: center;">
             <span style="font-size: 2em; display: block; margin-bottom: 10px;">📍</span>
             <h3 style="color: #af8c4b; margin: 0 0 10px 0; font-size: 1.1em; text-transform: uppercase;">Gdzie?</h3>
@@ -53,6 +61,7 @@
             <p style="margin: 5px 0 0 0;">Warszawa, Praga-Południe</p>
         </div>
 
+        {# Karta 3: Opis klimatu #}
         <div style="flex: 1; background: white; padding: 25px; border-radius: 20px; border-bottom: 5px solid #af8c4b; box-shadow: 0 5px 15px rgba(0,0,0,0.03); text-align: center;">
             <span style="font-size: 2em; display: block; margin-bottom: 10px;">🕯️</span>
             <h3 style="color: #af8c4b; margin: 0 0 10px 0; font-size: 1.1em; text-transform: uppercase;">Klimat</h3>

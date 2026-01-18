@@ -2,7 +2,7 @@
 {% block content %}
 
 <style>
-    /* Efekt po kliknięciu w pole formularza */
+    /* Style pozostają bez zmian - są spójne z dashboardem */
     input:focus, textarea:focus {
         outline: none;
         border-color: #5d4a27 !important;
@@ -10,7 +10,6 @@
         background-color: #fffcf5;
     }
 
-    /* To jest klasa dla Twojego przycisku */
     .btn-submit-custom {
         background: #af8c4b;
         color: white;
@@ -25,7 +24,6 @@
         font-weight: bold;
     }
 
-    /* Efekt najechania myszką na przycisk */
     .btn-submit-custom:hover {
         background: #5d4a27;
         transform: translateY(-2px);
@@ -42,16 +40,19 @@
 
     <div style="background: white; padding: 40px; border-radius: 30px; box-shadow: 0 15px 35px rgba(0,0,0,0.05); border-bottom: 6px solid #af8c4b;">
         
+        {# Blok wyświetlany tylko po pomyślnym przesłaniu danych (zmienna 'success' z Pythona) #}
         {% if success %}
             <div style="background: #fdf2d5; color: #af8c4b; padding: 15px; border-radius: 10px; text-align: center; margin-bottom: 25px; border: 1px solid #faca83;">
                 ✨ Twoja wiadomość została wysłana! Odpowiemy najszybciej jak to możliwe.
             </div>
         {% endif %}
 
+        {# Formularz wysyła dane metodą POST do trasy @app.route('/contact') #}
         <form method="POST">
             <div style="margin-bottom: 20px;">
                 <label style="display: block; margin-bottom: 8px; font-weight: bold;">Imię i Nazwisko</label>
-                <input type="text" name="name" placeholder="Jak się nazywasz?" 
+                {# Atrybut 'name' musi zgadzać się z request.form.get('name') w Pythonie #}
+                <input type="text" name="name" placeholder="Jak się nazywasz?" required
                        style="width: 100%; padding: 12px; border: 1px solid #faca83; border-radius: 10px; font-family: 'Georgia', serif; box-sizing: border-box;">
             </div>
 
@@ -59,6 +60,18 @@
                 <label style="display: block; margin-bottom: 8px; font-weight: bold;">Adres e-mail</label>
                 <input type="email" name="email" placeholder="Twoja poczta..." required 
                        style="width: 100%; padding: 12px; border: 1px solid #faca83; border-radius: 10px; font-family: 'Georgia', serif; box-sizing: border-box;">
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 8px; font-weight: bold;">Temat wiadomości</label>
+                <select name="subject" required 
+                        style="width: 100%; padding: 12px; border: 1px solid #faca83; border-radius: 10px; font-family: 'Georgia', serif; background: white;">
+                    <option value="" disabled selected>Wybierz...</option>
+                    <option value="Chcę dołączyć do klubu">Chcę dołączyć do klubu </option>
+                    <option value="Problem z logowaniem">Problem z kontem </option>
+                    <option value="Propozycja książki">Propozycja książki </option>
+                    <option value="Inna sprawa">Inna sprawa </option>
+                </select>
             </div>
 
             <div style="margin-bottom: 25px;">

@@ -5,6 +5,7 @@
 <title>Sandi's Book Club</title>
 
 <style>
+    /* Zmienne CSS - ułatwiają zachowanie spójności kolorów w całym projekcie */
 :root {
     --gold: #af8c4b;
 }
@@ -17,7 +18,7 @@ body {
     padding-bottom: 70px; /* miejsce na stopkę */
 }
 
-/* NAV */
+/* NAWIGACJA - Ustawiona na position: sticky, dzięki czemu menu zawsze "jedzie" z użytkownikiem */
 nav {
     background: white;
     padding: 20px 0;
@@ -50,7 +51,7 @@ nav {
     color: #af8c4b;
 }
 
-/* Klasa aktywnego podświetlenia */
+/* Specjalna klasa dodawana przez jinja, gdy jesteśmy na danej podstronie */
 .special-link {
     color: #af8c4b !important;
     border-bottom: 2px solid #af8c4b;
@@ -112,7 +113,7 @@ nav {
     opacity: 0.8;
 }
 
-/* MODAL */
+/* MODAL - okienka z opisem książki */
 .modal {
     display: none;
     position: fixed;
@@ -143,7 +144,7 @@ nav {
     color: var(--gold);
 }
 
-/* STOPKA */
+/* footer */
 footer {
     position: fixed;
     bottom: 0;
@@ -162,10 +163,12 @@ footer {
 
 <nav>
     <div class="nav-links">
+        {# Dynamiczne podświetlanie linków dzięki request.endpoint #}
         <a href="/" class="{{ 'special-link' if request.endpoint == 'index' }}">Główna</a>
         <a href="/about-me" class="{{ 'special-link' if request.endpoint == 'about' }}">O mnie</a>
         <a href="/contact" class="{{ 'special-link' if request.endpoint == 'contact' }}">Kontakt</a>
-        
+
+    {# Logika sesji: Jeśli użytkownik jest zalogowany, pokaż Panel i imię #}    
     {% if session.get('user') %}
         <a href="/dashboard" class="{{ 'special-link' if request.endpoint == 'dashboard' }}">Panel</a>
         <span style="font-size: 0.8em; color: var(--gold); margin-left: 10px;">
@@ -173,21 +176,22 @@ footer {
          </span>
         <a href="/logout" style="font-size: 0.8em; opacity: 0.7; text-decoration: none;">(Wyloguj)</a>
     {% else %}
+        {# Jeśli nikt nie jest zalogowany, pokaż tylko przycisk logowania #}    
         <a href="/login" class="{{ 'special-link' if request.endpoint == 'login' }}">Logowanie</a>
     {% endif %}
     </div>
 </nav>
-
+{# Pasek informacyjny dla zalogowanych - lepszy ux #}
 {% if session.get('user') %}
 <div style="background: #fdf2d5; text-align: center; padding: 10px; font-size: 1em; border-bottom: 2px solid #faca83; border-top: 2px solid #faca83;">
     Jesteś zalogowany jako <strong>{{ session['user'] }}</strong>
 </div>
 {% endif %}
-
+{# MIEJSCE NA TREŚĆ Z INNYCH PLIKÓW (index, dashboard, contact) #}
 <div class="container">
     {% block content %}{% endblock %}
 </div>
-
+{# MODAL - Uniwersalne okno, które wywołujemy z pliku index.html #}
 <div id="bookModal" class="modal">
     <div class="modal-content">
         <span class="close" onclick="closeModal()">&times;</span>
@@ -211,6 +215,10 @@ footer {
 </footer>
 
 <script>
+/**
+ * Funkcja otwierająca modal.
+ * Filtruje recenzje przekazane z Pythona (JSON), aby wyświetlić tylko te pasujące do tytułu.
+ */
 function openModal(title, author, desc, img) {
     document.getElementById('modalTitle').textContent = title;
     document.getElementById('modalAuthor').textContent = author;
@@ -218,13 +226,14 @@ function openModal(title, author, desc, img) {
     document.getElementById('modalImg').src = img;
 
     const commentsDiv = document.getElementById('modalComments');
+    // Pobranie recenzji z Flaska i konwersja na format czytelny dla JS
     const allReviews = {{ reviews | tojson | safe if reviews else '[]' }};
     const filtered = allReviews.filter(r => r.book === title);
     
     commentsDiv.innerHTML = filtered.length > 0 
         ? filtered.map(r => `<div style="background:#f9f9f9; padding:10px; border-radius:8px; margin-bottom:8px; border-left:3px solid var(--gold); text-align:left;"><strong>${r.user}:</strong><p style="margin:5px 0 0 0;">${r.text}</p></div>`).join('')
         : '<p style="color:#999; font-style:italic;">Brak opinii o tej książce.</p>';
-
+    // Dynamiczny przycisk: "Zaloguj się" lub "Dodaj recenzję"
     const actionDiv = document.getElementById('modalAction');
     
     {% if session.get('user') %}
@@ -241,14 +250,14 @@ function openModal(title, author, desc, img) {
     {% endif %}
 
     document.getElementById('bookModal').style.display = "flex";
-    document.body.style.overflow = "hidden";
+    document.body.style.overflow = "hidden";// Blokuje przewijanie strony pod modalem
 }
 
 function closeModal() {
     document.getElementById('bookModal').style.display = "none";
     document.body.style.overflow = "auto";
 }
-
+// Zamknięcie modala po kliknięciu w tło
 window.onclick = function(event) {
     const modal = document.getElementById('bookModal');
     if (event.target === modal) closeModal();
@@ -256,8 +265,8 @@ window.onclick = function(event) {
 </script>
 
 <script>
-// LICZNIK SPOTKANIA
-const meetingDate = new Date(2026, 0, 15, 19, 0, 0).getTime(); 
+// LICZNIK czasy - pojazuje ile dni/h zostało do następnego spotkania
+const meetingDate = new Date(2026, 0, 27, 18, 0, 0).getTime(); // Ustawienie na 27.01.2026
 
 const countdown = setInterval(function() {
     const now = new Date().getTime();

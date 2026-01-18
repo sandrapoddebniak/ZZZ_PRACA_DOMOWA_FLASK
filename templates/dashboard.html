@@ -2,63 +2,27 @@
 {% block content %}
 
 <style>
-    /* Efekt po kliknięciu w pole formularza (ZGODNY Z KONTAKTEM) */
+    /* Twoje style CSS - zachowane i spójne */
     input:focus, textarea:focus, select:focus {
         outline: none;
         border-color: #5d4a27 !important;
         box-shadow: 0 0 8px rgba(93, 74, 39, 0.2);
-        background-color: #fffcf5; /* Delikatne beżowe tło przy pisaniu */
+        background-color: #fffcf5;
     }
-
-    /* Twoja klasa przycisku (ZGODNA Z KONTAKTEM) */
     .dashboard-btn {
-        background: #af8c4b;
-        color: white;
-        border: none;
-        width: 100%; 
-        padding: 15px; 
-        border-radius: 50px; 
-        font-family: 'Georgia', serif; 
-        font-size: 1.1em; 
-        cursor: pointer; 
-        transition: 0.3s;
-        font-weight: bold;
-        letter-spacing: 1px;
+        background: #af8c4b; color: white; border: none; width: 100%; padding: 15px; 
+        border-radius: 50px; font-family: 'Georgia', serif; font-size: 1.1em; 
+        cursor: pointer; transition: 0.3s; font-weight: bold; letter-spacing: 1px;
     }
-
-    /* Efekt najechania myszką na przycisk */
-    .dashboard-btn:hover {
-        background: #5d4a27;
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-    }
-
-    /* Karty (pozostawiamy beżowe tło i brązowy cień) */
+    .dashboard-btn:hover { background: #5d4a27; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
     .custom-card {
-        background: #fffbf2; 
-        border: 1px solid #f2e6c9;
-        border-radius: 15px;
-        padding: 25px;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-        cursor: default;
+        background: #fff; border: 1px solid #f2e6c9; border-radius: 15px;
+        padding: 25px; transition: all 0.3s ease; box-shadow: 0 4px 6px rgba(0,0,0,0.05);
         margin-bottom: 30px;
     }
-
-    .custom-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 20px rgba(93, 74, 39, 0.15); 
-        border-color: #af8c4b;
-    }
-
-    /* Styl dla scrollbara */
-    .scroll-area::-webkit-scrollbar {
-        width: 5px;
-    }
-    .scroll-area::-webkit-scrollbar-thumb {
-        background: #f2e6c9;
-        border-radius: 10px;
-    }
+    .custom-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(93, 74, 39, 0.15); border-color: #af8c4b; }
+    .scroll-area::-webkit-scrollbar { width: 5px; }
+    .scroll-area::-webkit-scrollbar-thumb { background: #f2e6c9; border-radius: 10px; }
 </style>
 
 <div style="text-align: center; margin-bottom: 40px; margin-top: 20px;">
@@ -72,13 +36,14 @@
     
     <div style="display: flex; flex-direction: column;">
         
+        {# LISTA KLUBOWICZÓW - Dane z User.query.all() #}
         <div class="custom-card">
             <h3 style="font-family: 'Georgia', serif; color: var(--gold); border-bottom: 1px solid #f2e6c9; padding-bottom: 15px; margin-top: 0; display: flex; justify-content: space-between; align-items: center;">
-                Klubowicze 👤 <span style="font-size: 0.6em; background: #fff; padding: 4px 8px; border-radius: 10px; border: 1px solid #f2e6c9;">{{ users|length }}</span>
+                Klubowicze 👤 <span style="font-size: 0.6em; background: #fffbf2; padding: 4px 8px; border-radius: 10px; border: 1px solid #f2e6c9;">{{ users|length }}</span>
             </h3>
             <div class="scroll-area" style="max-height: 300px; overflow-y: auto; padding-right: 5px;">
                 {% for u in users %}
-                    <div style="padding: 12px 0; border-bottom: 1px solid #fcf6e8; font-size: 0.95em; color: #5d4a27; font-family: 'Georgia', serif;">
+                    <div style="padding: 12px 0; border-bottom: 1px solid #fcf6e8; font-size: 0.95em; color: #5d4a27;">
                         <span style="color: var(--gold); margin-right: 10px;">●</span> {{ u.name }}
                         {% if u.username == session['user'] %} <small style="font-style: italic; color: #999;">(Ty)</small> {% endif %}
                     </div>
@@ -86,6 +51,7 @@
             </div>
         </div>
 
+        {# SKRZYNKA ADMINA - Pobiera dane z tabeli Message #}
         {% if session['user'].lower() == 'admin' %}
         <div class="custom-card" style="border: 2px solid var(--gold);">
             <h3 style="font-family: 'Georgia', serif; color: var(--gold); margin-top: 0; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #f2e6c9; padding-bottom: 15px;">
@@ -93,11 +59,14 @@
             </h3>
             <div class="scroll-area" style="max-height: 450px; overflow-y: auto; padding-right: 5px; display: flex; flex-direction: column; gap: 15px; margin-top: 15px;">
                 {% for m in all_messages|reverse %}
-                    <div style="background: #fff; border: 1px solid #f2e6c9; padding: 15px; border-radius: 10px;">
+                    <div style="background: #fffbf2; border: 1px solid #f2e6c9; padding: 15px; border-radius: 10px;">
                         <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                            <strong style="color: #5d4a27; font-family: 'Georgia', serif; font-size: 0.9em;">{{ m.name }}</strong>
+                            <strong style="color: #5d4a27; font-size: 0.9em;">{{ m.name }}</strong>
+                            <span style="font-size: 0.7em; background: #fdf2d5; color: #af8c4b; padding: 2px 8px; border-radius: 5px; font-weight: bold;">
+                                {{ m.subject }}
+                            </span>
                         </div>
-                        <p style="margin: 0; font-size: 0.85em; color: #444; line-height: 1.4; font-style: italic; font-family: 'Georgia', serif;">
+                        <p style="margin: 0; font-size: 0.85em; color: #444; line-height: 1.4; font-style: italic;">
                             "{{ m.text }}"
                         </p>
                         <div style="text-align: right; margin-top: 8px;">
@@ -116,13 +85,14 @@
 
     <div style="display: flex; flex-direction: column;">
         
+        {# FORMULARZ DODAWANIA OPINII - Kluczowe atrybuty 'name' #}
         <div class="custom-card">
             <h3 style="font-family: 'Georgia', serif; color: var(--gold); margin-top: 0; margin-bottom: 20px;">Dodaj nową opinię ✍️</h3>
             <form method="POST" style="display: flex; flex-direction: column; gap: 20px;">
                 <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 15px;">
                     <div>
                         <label style="font-size: 0.85em; text-transform: uppercase; letter-spacing: 1px; color: #7a6a4a; font-weight: bold;">Książka:</label>
-                        <select name="book" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #f2e6c9; background: #fff; font-family: 'Georgia', serif; margin-top: 8px;">
+                        <select name="book" required style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #f2e6c9; background: #fff; font-family: 'Georgia', serif; margin-top: 8px;">
                             {% for b in books %}
                                 <option value="{{ b.title }}">{{ b.title }}</option>
                             {% endfor %}
@@ -130,7 +100,7 @@
                     </div>
                     <div>
                         <label style="font-size: 0.85em; text-transform: uppercase; letter-spacing: 1px; color: #7a6a4a; font-weight: bold;">Ocena:</label>
-                        <select name="rating" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #f2e6c9; background: #fff; font-family: inherit; margin-top: 8px;">
+                        <select name="rating" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #f2e6c9; background: #fff; margin-top: 8px;">
                             <option value="5">⭐⭐⭐⭐⭐</option>
                             <option value="4">⭐⭐⭐⭐</option>
                             <option value="3">⭐⭐⭐</option>
@@ -146,36 +116,32 @@
                               style="width: 100%; height: 100px; padding: 12px; border-radius: 8px; border: 1px solid #f2e6c9; background: #fff; font-family: 'Georgia', serif; margin-top: 8px; resize: none; line-height: 1.5;"></textarea>
                 </div>
 
-                <button type="submit" class="btn dashboard-btn">
-                    OPUBLIKUJ RECENZJĘ
-                </button>
+                <button type="submit" class="dashboard-btn">OPUBLIKUJ RECENZJĘ</button>
             </form>
         </div>
 
+        {# LISTA RECENZJI - Pobierana z tabeli Review #}
         <div class="custom-card">
             <h3 style="font-family: 'Georgia', serif; color: var(--gold); margin-top: 0; margin-bottom: 25px;">Wasze ostatnie przemyślenia 🕯️</h3>
             <div style="display: flex; flex-direction: column; gap: 25px;">
-                {% for r in reviews[::-1] %}
-                    <div style="background: #fff; padding: 25px; border-radius: 15px; border-left: 5px solid var(--gold); position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.02);">
+                {% for r in reviews|reverse %}
+                    <div style="background: #fff; padding: 25px; border-radius: 15px; border-left: 5px solid var(--gold); position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.02); border-top: 1px solid #fcf6e8; border-right: 1px solid #fcf6e8;">
                         <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
                             <div>
-                                <strong style="color: #5d4a27; font-family: 'Georgia', serif; font-size: 1.1em;">{{ r.user }}</strong>
-                                <div style="font-size: 0.75em; color: #af8c4b; margin-top: 2px; font-family: 'Georgia', serif;">Oceniono: {{ r.book }}</div>
+                                <strong style="color: #5d4a27; font-size: 1.1em;">{{ r.user }}</strong>
+                                <div style="font-size: 0.75em; color: #af8c4b; margin-top: 2px;">Oceniono: {{ r.book }}</div>
                             </div>
                             <div style="text-align: right;">
+                                {# Konwertujemy rating na liczbę, by pomnożyć gwiazdki #}
                                 <div style="font-size: 1em; margin-bottom: 4px;">{{ "⭐" * (r.rating|int) }}</div>
-                                <div style="font-size: 0.7em; color: #999; text-transform: uppercase; letter-spacing: 1px;">{{ r.date|default('Dzisiaj') }}</div>
+                                <div style="font-size: 0.7em; color: #999; text-transform: uppercase; letter-spacing: 1px;">{{ r.date }}</div>
                             </div>
                         </div>
-                        <p style="margin: 0; font-style: italic; line-height: 1.6; color: #5d4a27; border-top: 1px solid #f2e6c9; padding-top: 12px; font-family: 'Georgia', serif;">
+                        <p style="margin: 0; font-style: italic; line-height: 1.6; color: #5d4a27; border-top: 1px solid #f2e6c9; padding-top: 12px;">
                             "{{ r.text }}"
                         </p>
                     </div>
                 {% endfor %}
-                
-                {% if not reviews %}
-                    <p style="text-align: center; color: #999; font-style: italic; padding: 20px; font-family: 'Georgia', serif;">Cisza... bądź pierwszą osobą, która podzieli się opinią!</p>
-                {% endif %}
             </div>
         </div>
 
