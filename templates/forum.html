@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+    * { font-family: 'Georgia', serif !important; }
+    :root { --gold: #af8c4b; --dark: #5d4a27; }
+
+    .search-box {
+        background: white; padding: 30px; border-radius: 15px;
+        border-bottom: 5px solid var(--gold); box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        text-align: center; margin-bottom: 40px;
+    }
+
+    /* SIATKA WYNIKÓW */
+    .results-grid {
+        display: grid; 
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 30px;
+    }
+
+    .book-card {
+        background: white; padding: 20px; border-radius: 15px;
+        border-bottom: 4px solid var(--gold); box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        display: flex; flex-direction: column; transition: 0.3s;
+    }
+    .book-card:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
+
+    .book-main-info { display: flex; gap: 15px; margin-bottom: 15px; }
+    
+    .book-card img {
+        width: 100px; height: 150px; object-fit: cover;
+        border-radius: 5px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .book-text { flex: 1; }
+    .book-text h3 { font-size: 1.1em; color: var(--dark); margin: 0 0 5px 0; line-height: 1.2; }
+    .book-text p.author { font-size: 0.9em; color: var(--gold); font-style: italic; margin-bottom: 10px; }
+
+    /* STYL OPISU */
+    .book-description {
+        font-size: 0.85em; color: #666; line-height: 1.5;
+        display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical;
+        overflow: hidden; margin-bottom: 15px; text-align: justify;
+    }
+
+    .btn-group { display: flex; gap: 10px; margin-top: auto; }
+    .btn-add {
+        flex: 1; border: none; padding: 10px; border-radius: 6px;
+        cursor: pointer; font-size: 0.75em; font-weight: bold; text-transform: uppercase;
+        color: white; transition: 0.2s;
+    }
+    .btn-read { background: var(--gold); }
+    .btn-want { background: var(--dark); }
+    .btn-add:hover { filter: brightness(1.2); }
+
+    input[type="text"] {
+        width: 60%; padding: 12px; border: 1px solid #f2e6c9; border-radius: 8px; font-size: 1em;
+    }
+    .search-btn {
+        background: var(--gold); color: white; border: none; padding: 12px 30px;
+        border-radius: 8px; cursor: pointer; font-weight: bold; text-transform: uppercase;
+    }
+</style>
+
+<div class="forum-container" style="max-width: 1200px; margin: 0 auto; padding: 20px;">
+    <div class="search-box">
+        <h2 style="color: var(--dark); margin-bottom: 15px;">Biblioteka Google Books</h2>
+        <form method="POST">
+            <input type="text" name="query" placeholder="Szukaj tytułu, autora lub gatunku..." required>
+            <button type="submit" class="search-btn">Szukaj</button>
+        </form>
+    </div>
+
+    <div class="results-grid">
+        {% for result in results %}
+        <div class="book-card">
+            <div class="book-main-info">
+                <img src="{{ result.thumbnail or 'https://via.placeholder.com/100x150?text=Brak' }}">
+                <div class="book-text">
+                    <h3>{{ result.title }}</h3>
+                    <p class="author">Autor: {{ result.author }}</p>
+                </div>
+            </div>
+
+            <div class="book-description">
+                {{ result.description or 'Nie dodano jeszcze opisu dla tej pozycji.' }}
+            </div>
+
+            <form action="{{ url_for('add_to_progress') }}" method="POST" class="btn-group">
+                <input type="hidden" name="google_id" value="{{ result.google_id }}">
+                <input type="hidden" name="title" value="{{ result.title }}">
+                <input type="hidden" name="author" value="{{ result.author }}">
+                <input type="hidden" name="thumbnail" value="{{ result.thumbnail }}">
+                <input type="hidden" name="page_count" value="{{ result.page_count }}">
+                
+                <button type="submit" name="status" value="Przeczytane" class="btn-add btn-read">✓ Przeczytane</button>
+                <button type="submit" name="status" value="Chcę przeczytać" class="btn-add btn-want">+ Na listę</button>
+            </form>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}

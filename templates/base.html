@@ -3,195 +3,106 @@
 <head>
 <meta charset="UTF-8">
 <title>Sandi's Book Club</title>
-
 <style>
-    /* Zmienne CSS - ułatwiają zachowanie spójności kolorów w całym projekcie */
-:root {
-    --gold: #af8c4b;
-}
+    :root { --gold: #af8c4b; }
+    body { font-family: Georgia, sans-serif; background-color: #fffbf2; color: #5d4a27; margin: 0; padding-bottom: 70px; }
+    
+    /* 1. NIERUCHOMA NAWIGACJA Z DWOMA LINIAMI */
+    nav { 
+        background: white; 
+        padding: 60px 0; 
+        display: flex; 
+        justify-content: center; 
+        align-items: center;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05); 
+        position: fixed; 
+        top: 0; 
+        left: 0;
+        width: 100%;
+        z-index: 2000; 
+        border-top: 3px solid var(--gold); 
+        border-bottom: 3px solid var(--gold); 
+    }
+    
+    .nav-links { display: flex; gap: 40px; align-items: center; }
+    .nav-links a { 
+        text-decoration: none; color: #5d4a27; font-weight: bold; text-transform: uppercase; 
+        font-size: 0.9em; letter-spacing: 1px; transition: 0.3s; padding-bottom: 5px; 
+    }
+    .nav-links a:hover { color: #af8c4b; }
+    .special-link { color: #af8c4b !important; border-bottom: 2px solid #af8c4b; }
 
-body {
-    font-family: Georgia, sans-serif;
-    background-color: #fffbf2;
-    color: #5d4a27;
-    margin: 0;
-    padding-bottom: 70px; /* miejsce na stopkę */
-}
+    /* 2. NIERUCHOMY PASEK LOGOWANIA */
+    .login-status-bar {
+        background: #fdf2d5; 
+        text-align: center; 
+        padding: 20px; 
+        font-size: 1.1em; 
+        border-bottom: 3px solid var(--gold);
+        position: fixed; 
+        top: 141px; 
+        left: 0;
+        width: 100%;
+        z-index: 1999;
+    }
 
-/* NAWIGACJA - Ustawiona na position: sticky, dzięki czemu menu zawsze "jedzie" z użytkownikiem */
-nav {
-    background: white;
-    padding: 20px 0;
-    display: flex;
-    justify-content: center;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-}
+    /* 3. MARGINES TREŚCI */
+    .container { 
+        max-width: 1100px; 
+        margin: auto; 
+        padding: 20px; 
+        margin-top: 240px; 
+    }
+    
+    .book-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 30px; margin-top: 30px; }
+    .card { 
+        background: white; padding: 12px; border-radius: 10px; border-bottom: 5px solid var(--gold); 
+        cursor: pointer; transition: 0.3s; box-shadow: 0 4px 8px rgba(0,0,0,0.1); width: 200px; text-align: center; 
+    }
+    .card:hover { transform: scale(1.02); background: #fef9e7; }
+    .card img { width: 100%; height: 280px; object-fit: cover; border-radius: 5px; filter: sepia(0.1); transition: 0.3s; }
+    .card h3 { font-size: 1em; margin: 10px 0 5px 0; color: #5d4a27; }
+    .card p { font-size: 0.85em; margin: 0; opacity: 0.8; }
 
-.nav-links {
-    display: flex;
-    gap: 40px;
-    align-items: center;
-}
+    /* MODAL */
+    .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 3000; align-items: center; justify-content: center; }
+    .modal-content { background: white; padding: 30px; border-radius: 15px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; position: relative; }
+    .close { position: absolute; right: 20px; top: 10px; font-size: 30px; cursor: pointer; color: var(--gold); }
 
-.nav-links a {
-    text-decoration: none;
-    color: #5d4a27;
-    font-weight: bold;
-    text-transform: uppercase;
-    font-size: 0.9em;
-    letter-spacing: 1px;
-    transition: 0.3s;
-    padding-bottom: 5px;
-}
-
-.nav-links a:hover {
-    color: #af8c4b;
-}
-
-/* Specjalna klasa dodawana przez jinja, gdy jesteśmy na danej podstronie */
-.special-link {
-    color: #af8c4b !important;
-    border-bottom: 2px solid #af8c4b;
-}
-
-.container {
-    max-width: 1100px;
-    margin: auto;
-    padding: 20px;
-}
-
-/* KARTY */
-.book-grid {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center; /* Wyśrodkowanie kart */
-    gap: 30px;
-    margin-top: 30px;
-}
-
-.card {
-    background: white;
-    padding: 12px;
-    border-radius: 10px;
-    border-bottom: 5px solid var(--gold);
-    cursor: pointer;
-    transition: 0.3s;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    width: 200px; /* Stała, mniejsza szerokość karty */
-    text-align: center;
-}
-
-.card:hover {
-    transform: scale(1.02);
-    background: #fef9e7;
-}
-
-.card img {
-    width: 100%;
-    height: 280px; /* Zmniejszona wysokość z 350px */
-    object-fit: cover;
-    border-radius: 5px;
-    filter: sepia(0.1);
-    transition: 0.3s;
-}
-
-.card:hover img {
-    filter: sepia(0);
-}
-.card h3 {
-    font-size: 1em; /* Mniejszy tytuł */
-    margin: 10px 0 5px 0;
-    color: #5d4a27;
-}
-
-.card p {
-    font-size: 0.85em; /* Mniejszy autor */
-    margin: 0;
-    opacity: 0.8;
-}
-
-/* MODAL - okienka z opisem książki */
-.modal {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.7);
-    z-index: 2000;
-    align-items: center;
-    justify-content: center;
-}
-
-.modal-content {
-    background: white;
-    padding: 30px;
-    border-radius: 15px;
-    max-width: 600px;
-    width: 90%;
-    max-height: 80vh;
-    overflow-y: auto;
-    position: relative;
-}
-
-.close {
-    position: absolute;
-    right: 20px;
-    top: 10px;
-    font-size: 30px;
-    cursor: pointer;
-    color: var(--gold);
-}
-
-/* footer */
-footer {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    background-color: #677b89;
-    color: #faca83;
-    text-align: center;
-    padding: 15px 0;
-    font-size: 0.9em;
-    border-top: 3px solid var(--gold);
-    box-shadow: 0 -5px 15px rgba(0,0,0,0.05);
-}
+    footer { 
+        position: fixed; bottom: 0; width: 100%; background-color: #677b89; color: #faca83; 
+        text-align: center; padding: 15px 0; font-size: 0.9em; border-top: 3px solid var(--gold); 
+        z-index: 2000;
+    }
 </style>
 </head>
 <body>
 
 <nav>
     <div class="nav-links">
-        {# Dynamiczne podświetlanie linków dzięki request.endpoint #}
-        <a href="/" class="{{ 'special-link' if request.endpoint == 'index' }}">Główna</a>
-        <a href="/about-me" class="{{ 'special-link' if request.endpoint == 'about' }}">O mnie</a>
-        <a href="/contact" class="{{ 'special-link' if request.endpoint == 'contact' }}">Kontakt</a>
-
-    {# Logika sesji: Jeśli użytkownik jest zalogowany, pokaż Panel i imię #}    
-    {% if session.get('user') %}
-        <a href="/dashboard" class="{{ 'special-link' if request.endpoint == 'dashboard' }}">Panel</a>
-        <span style="font-size: 0.8em; color: var(--gold); margin-left: 10px;">
-            Cześć, <strong>{{ session['user'] }}</strong>!
-         </span>
-        <a href="/logout" style="font-size: 0.8em; opacity: 0.7; text-decoration: none;">(Wyloguj)</a>
-    {% else %}
-        {# Jeśli nikt nie jest zalogowany, pokaż tylko przycisk logowania #}    
-        <a href="/login" class="{{ 'special-link' if request.endpoint == 'login' }}">Logowanie</a>
-    {% endif %}
+        <a href="{{ url_for('index') }}" class="{{ 'special-link' if request.endpoint == 'index' }}">Główna</a>
+        <a href="{{ url_for('about') }}" class="{{ 'special-link' if request.endpoint == 'about' }}">O mnie</a>
+        <a href="{{ url_for('contact') }}" class="{{ 'special-link' if request.endpoint == 'contact' }}">Kontakt</a>
+        {% if session.get('user') %}
+            <a href="{{ url_for('forum') }}" class="{{ 'special-link' if request.endpoint == 'forum' }}">Forum</a>
+            <a href="{{ url_for('dashboard') }}" class="{{ 'special-link' if request.endpoint == 'dashboard' }}">Panel</a>
+            <a href="{{ url_for('logout') }}">Wyloguj</a>
+        {% else %}
+            <a href="{{ url_for('login') }}">Logowanie</a>
+        {% endif %}
     </div>
 </nav>
-{# Pasek informacyjny dla zalogowanych - lepszy ux #}
+
 {% if session.get('user') %}
-<div style="background: #fdf2d5; text-align: center; padding: 10px; font-size: 1em; border-bottom: 2px solid #faca83; border-top: 2px solid #faca83;">
+<div class="login-status-bar">
     Jesteś zalogowany jako <strong>{{ session['user'] }}</strong>
 </div>
 {% endif %}
-{# MIEJSCE NA TREŚĆ Z INNYCH PLIKÓW (index, dashboard, contact) #}
+
 <div class="container">
     {% block content %}{% endblock %}
 </div>
-{# MODAL - Uniwersalne okno, które wywołujemy z pliku index.html #}
+
 <div id="bookModal" class="modal">
     <div class="modal-content">
         <span class="close" onclick="closeModal()">&times;</span>
@@ -202,95 +113,82 @@ footer {
                 <strong id="modalAuthor"></strong>
                 <div id="modalDesc" style="margin-top: 15px; line-height: 1.6;"></div>
                 <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
-                <h4 style="color: var(--gold); margin-bottom: 10px;">Opinie klubowiczów:</h4>
-                <div id="modalComments" style="font-size: 0.9em; line-height: 1.4;"></div>
-                <div id="modalAction" style="margin-top: 20px; padding-top: 15px; border-top: 1px dashed #ddd; text-align: center;"></div>
+                <div id="modalComments"></div>
             </div>
         </div>
     </div>
 </div>
 
-<footer>
-    <strong>Sandi's Book Club</strong> © 2026
-</footer>
+<footer><strong>Sandi's Book Club</strong> © 2026</footer>
 
 <script>
-/**
- * Funkcja otwierająca modal.
- * Filtruje recenzje przekazane z Pythona (JSON), aby wyświetlić tylko te pasujące do tytułu.
- */
 function openModal(title, author, desc, img) {
+    // 1. Ustawienie podstawowych danych
     document.getElementById('modalTitle').textContent = title;
     document.getElementById('modalAuthor').textContent = author;
     document.getElementById('modalDesc').innerHTML = desc;
     document.getElementById('modalImg').src = img;
 
-    const commentsDiv = document.getElementById('modalComments');
-    // Pobranie recenzji z Flaska i konwersja na format czytelny dla JS
-    const allReviews = {{ reviews | tojson | safe if reviews else '[]' }};
-    const filtered = allReviews.filter(r => r.book === title);
-    
-    commentsDiv.innerHTML = filtered.length > 0 
-        ? filtered.map(r => `<div style="background:#f9f9f9; padding:10px; border-radius:8px; margin-bottom:8px; border-left:3px solid var(--gold); text-align:left;"><strong>${r.user}:</strong><p style="margin:5px 0 0 0;">${r.text}</p></div>`).join('')
-        : '<p style="color:#999; font-style:italic;">Brak opinii o tej książce.</p>';
-    // Dynamiczny przycisk: "Zaloguj się" lub "Dodaj recenzję"
-    const actionDiv = document.getElementById('modalAction');
-    
-    {% if session.get('user') %}
-        actionDiv.innerHTML = `
-            <a href="/dashboard" style="text-decoration:none; background:var(--gold); color:white; padding:10px 20px; border-radius:5px; font-weight:bold; font-size:0.8em; display: inline-block;">
-                + DODAJ RECENZJĘ W PANELU
-            </a>`;
-    {% else %}
-        actionDiv.innerHTML = `
-            <p style="font-size:0.85em; color:#5d4a27;">
-                Chcesz dodać opinię? 
-                <a href="/login" style="color:var(--gold); font-weight:bold; text-decoration:none;">Zaloguj się</a>
-            </p>`;
-    {% endif %}
+    // 2. Pobieranie opinii - bezpieczne parsowanie JSON
+    let reviews = [];
+    try {
+        reviews = {{ reviews | tojson | safe if reviews else '[]' }};
+    } catch(e) {
+        console.error("Błąd ładowania opinii:", e);
+    }
 
+    // 3. Filtrowanie i wyświetlanie opinii
+    const filtered = reviews.filter(r => r.book === title);
+    const commentsContainer = document.getElementById('modalComments');
+    
+    if (commentsContainer) {
+        commentsContainer.innerHTML = filtered.length > 0 
+            ? filtered.map(r => `
+                <div style="background:#f9f9f9; padding:10px; margin-bottom:8px; border-left:3px solid var(--gold); border-radius:5px;">
+                    <strong style="font-size:0.9em; color:#5d4a27;">${r.user}:</strong> 
+                    <p style="margin:5px 0 0 0; font-size:0.85em; font-style:italic;">"${r.text}"</p>
+                </div>`).join('')
+            : '<p style="color:#999; font-size:0.85em; font-style:italic;">Brak opinii klubowiczów o tej pozycji.</p>';
+    }
+
+    // 4. Pokazanie okna
     document.getElementById('bookModal').style.display = "flex";
-    document.body.style.overflow = "hidden";// Blokuje przewijanie strony pod modalem
 }
 
-function closeModal() {
-    document.getElementById('bookModal').style.display = "none";
-    document.body.style.overflow = "auto";
+function closeModal() { 
+    document.getElementById('bookModal').style.display = "none"; 
 }
-// Zamknięcie modala po kliknięciu w tło
+
+// Zamykanie przy kliknięciu poza okno
 window.onclick = function(event) {
-    const modal = document.getElementById('bookModal');
-    if (event.target === modal) closeModal();
-};
-</script>
+    if (event.target == document.getElementById('bookModal')) {
+        closeModal();
+    }
+}
 
-<script>
-// LICZNIK czasy - pojazuje ile dni/h zostało do następnego spotkania
-const meetingDate = new Date(2026, 0, 27, 18, 0, 0).getTime(); // Ustawienie na 27.01.2026
-
+const meetingDate = new Date(2026, 0, 27, 18, 0, 0).getTime();
 const countdown = setInterval(function() {
     const now = new Date().getTime();
     const distance = meetingDate - now;
-
     const days = Math.floor(distance / (1000 * 60 * 60 * 24));
     const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
     const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
     const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
+    
     const dEl = document.getElementById("days");
     const hEl = document.getElementById("hours");
     const mEl = document.getElementById("minutes");
     const sEl = document.getElementById("seconds");
-
+    
     if(dEl) dEl.innerText = days.toString().padStart(2, '0');
     if(hEl) hEl.innerText = hours.toString().padStart(2, '0');
     if(mEl) mEl.innerText = minutes.toString().padStart(2, '0');
     if(sEl) sEl.innerText = seconds.toString().padStart(2, '0');
-
+    
     if (distance < 0) {
         clearInterval(countdown);
         const section = document.getElementById("countdown-section");
-        if(section) section.innerHTML = "<h2 style='color:var(--gold); font-family:Georgia;'>Spotkanie właśnie trwa! 🕯️</h2>";
+        if(section) section.innerHTML = "<h2>Spotkanie właśnie trwa! 🕯️</h2>";
     }
 }, 1000);
 </script>
