@@ -2,15 +2,31 @@
 {% block content %}
 
 <style>
-    /* Kontener dla całej sekcji karuzeli */
+    /* TWOJE STYLE - BEZ ZMIAN */
+    .logged-badge {
+        position: absolute;
+        top: 25px;
+        left: 30px;
+        background: #fdfaf0;
+        border: 1px solid #af8c4b;
+        color: #5d4a27;
+        padding: 5px 12px;
+        border-radius: 6px;
+        font-family: 'Georgia', serif;
+        font-size: 0.8em;
+        z-index: 1000;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
     .carousel-container {
         position: relative;
         max-width: 1100px;
-        margin: 0 auto;
-        padding: 0 50px; /* Miejsce na strzałki po bokach */
+        margin: 0 auto 80px auto;
+        padding: 0 50px;
+        display: flex;
+        align-items: center;
     }
 
-    /* Sama karuzela */
     .book-carousel {
         display: flex;
         overflow-x: auto;
@@ -19,59 +35,109 @@
         padding: 20px 5px;
         scrollbar-width: none;
         -ms-overflow-style: none;
-        scroll-behavior: smooth; /* Płynne przewijanie przy kliknięciu */
+        scroll-behavior: smooth;
+        width: 100%;
     }
 
-    .book-carousel::-webkit-scrollbar {
-        display: none;
-    }
+    .book-carousel::-webkit-scrollbar { display: none; }
 
     .book-carousel .card {
-        flex: 0 0 200px;
+        flex: 0 0 calc(25% - 23px);
         scroll-snap-align: start;
         transition: transform 0.3s ease;
         margin-bottom: 10px;
-    }
-
-    .book-carousel .card:hover {
-        transform: translateY(-5px);
-    }
-
-    /* Styl strzałek */
-    .nav-arrow {
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        background: white;
-        border: 1px solid #f2e6c9;
-        color: #af8c4b;
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
         cursor: pointer;
         display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.5em;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        flex-direction: column;
+        align-items: center; 
+        text-align: center;
+    }
+
+    .book-carousel .card:hover { transform: translateY(-5px); }
+
+    .book-carousel .card img {
+        width: 100%;
+        height: auto;
+        aspect-ratio: 2/3;
+        object-fit: cover;
+        border-radius: 15px; 
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    .book-carousel h3 {
+        margin: 15px 0 5px 0;
+        font-family: 'Georgia', serif;
+        font-size: 1.1em;
+        color: #5d4a27;
+    }
+
+    .book-carousel p {
+        margin: 0;
+        font-family: 'Georgia', serif;
+        font-size: 0.9em;
+        color: #af8c4b;
+    }
+
+    .nav-btn {
+        background: none;
+        border: none;
+        color: #af8c4b;
+        font-size: 2em;
+        cursor: pointer;
+        padding: 10px;
         z-index: 10;
-        transition: 0.3s;
     }
 
-    .nav-arrow:hover {
-        background: #af8c4b;
-        color: white;
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        z-index: 2000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.7);
+        backdrop-filter: blur(5px);
     }
 
-    .arrow-left { left: 0; }
-    .arrow-right { right: 0; }
+    .modal-box {
+        background-color: #fff;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        padding: 20px;
+        border-radius: 20px;
+        width: 95%;
+        max-width: 450px; 
+        max-height: 85vh;
+        overflow-y: auto;
+        font-family: 'Georgia', serif;
+        box-shadow: 0 15px 40px rgba(0,0,0,0.2); 
+        border: 1px solid #f2e6c9;
+    }
+
+    #modal-title { color: #5d4a27; font-size: 1.4em; margin-bottom: 5px; text-align: center; }
+    #modal-author { color: #af8c4b; font-size: 1em; font-style: italic; text-align: center; margin-bottom: 20px; font-weight: normal; }
+    #modal-desc { line-height: 1.6; color: #444; font-size: 0.9em; text-align: justify; padding: 0 10px; }
+    #modal-img { display: block; margin: 0 auto 20px auto; width: 130px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+
+    .modal-box::-webkit-scrollbar { width: 4px; }
+    .modal-box::-webkit-scrollbar-thumb { background: #f2e6c9; border-radius: 10px; }
+    .close-btn { position: absolute; right: 20px; top: 15px; font-size: 30px; cursor: pointer; color: #af8c4b; }
+    .comment-bubble { background: #fdfaf0; padding: 15px; border-radius: 12px; margin-bottom: 15px; border-left: 4px solid #af8c4b; }
 </style>
 
-<div style="text-align: center; margin-top: 0; margin-bottom: 50px; overflow: hidden;">
+{% if session.get('user_id') %}
+<div class="logged-badge">
+    <strong>Zalogowano:</strong> {{ session['user'] }}
+</div>
+{% endif %}
+
+<div style="text-align: center; margin-bottom: 50px; margin-top: 50px; overflow: hidden;">
     <div style="max-width: 100%; margin: 0 auto;">
-        <img src="{{ url_for('static', filename='tlo.png') }}" 
-             alt="Sandi's Book Club" 
-             style="width: 100%; max-height: 500px; object-fit: cover; border-radius: 0;">
+        <img src="{{ url_for('static', filename='tlo.png') }}" alt="Sandi's Book Club" 
+             style="width: 100%; max-height: 500px; object-fit: cover;">
     </div>
     <p style="margin-top: 25px; font-family: 'Georgia', serif; font-style: italic; color: #5d4a27; font-size: 1.1em; max-width: 700px; margin-left: auto; margin-right: auto;">
         Kameralny klub czytelniczy dla tych, którzy szukają sensu, emocji i rozmów bez pośpiechu.
@@ -79,12 +145,12 @@
 </div>
 
 <div id="countdown-section" style="text-align: center; margin: 50px 0; padding: 35px; background: #fcf6e8; border-radius: 15px; border: 1px solid #f2e6c9;">
-    <h3 style="font-family: 'Georgia', serif; color: #af8c4b; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 2px; font-size: 0.9em;">Następne spotkanie klubu za:</h3>
+    <h3 style="font-family: 'Georgia', serif; color: #af8c4b; text-transform: uppercase; letter-spacing: 2px; font-size: 0.9em;">Następne spotkanie klubu za:</h3>
     <div id="timer" style="font-family: 'Georgia', serif; color: #5d4a27; font-size: 3.5em; font-weight: bold; display: flex; justify-content: center; gap: 25px;">
-        <div><span id="days">00</span><small style="display:block; font-size: 0.25em; text-transform: uppercase; color: #af8c4b; margin-top: 5px;">Dni</small></div>
-        <div><span id="hours">00</span><small style="display:block; font-size: 0.25em; text-transform: uppercase; color: #af8c4b; margin-top: 5px;">Godz</small></div>
-        <div><span id="minutes">00</span><small style="display:block; font-size: 0.25em; text-transform: uppercase; color: #af8c4b; margin-top: 5px;">Min</small></div>
-        <div><span id="seconds">00</span><small style="display:block; font-size: 0.25em; text-transform: uppercase; color: #af8c4b; margin-top: 5px;">Sek</small></div>
+        <div><span id="days">00</span><small style="display:block; font-size: 0.3em;">Dni</small></div>
+        <div><span id="hours">00</span><small style="display:block; font-size: 0.3em;">Godz</small></div>
+        <div><span id="minutes">00</span><small style="display:block; font-size: 0.3em;">Min</small></div>
+        <div><span id="seconds">00</span><small style="display:block; font-size: 0.3em;">Sek</small></div>
     </div>
 </div>
 
@@ -95,43 +161,137 @@
 </h2>
 
 <div class="carousel-container">
-    <button class="nav-arrow arrow-left" onclick="scrollCarousel(-230)">&#8249;</button>
-    
-    <div class="book-carousel" id="bookCarousel">
+    <button class="nav-btn" onclick="scrollC('discussed-c', -300)">❮</button>
+    <div class="book-carousel" id="discussed-c">
         {% for b in discussed %}
-        <div class="card" onclick="openModal('{{ b.title|replace("'", "\\'") }}', '{{ b.author|replace("'", "\\'") }}', '{{ b.desc|replace("'", "\\'") }}', '{{ b.img }}')">
+        <div class="card" onclick="openModal('{{ b.title|e }}', '{{ b.author|e }}', '{{ b.desc|e }}', '{{ b.img }}')">
             <img src="{{ b.img }}" alt="{{ b.title }}">
             <h3>{{ b.title }}</h3>
             <p><strong>{{ b.author }}</strong></p>
         </div>
         {% endfor %}
     </div>
-
-    <button class="nav-arrow arrow-right" onclick="scrollCarousel(230)">&#8250;</button>
+    <button class="nav-btn" onclick="scrollC('discussed-c', 300)">❯</button>
 </div>
-
-<script>
-    function scrollCarousel(distance) {
-        document.getElementById('bookCarousel').scrollBy({
-            left: distance,
-            behavior: 'smooth'
-        });
-    }
-</script>
 
 <div style="background: #fdfaf0; margin: 80px -40px 0 -40px; padding: 60px 40px; border-top: 1px solid #f2e6c9; border-bottom: 1px solid #f2e6c9;">
     <h2 style="text-align: center; color: #5d4a27; margin-bottom: 45px; font-family: 'Georgia', serif; font-size: 2em;">
-        <span style="border-bottom: 2px solid #ffd87e; padding-bottom: 10px;">Nadchodzące lektury</span>
+        <span style="border-bottom: 2px solid #af8c4b; padding-bottom: 10px;">Nadchodzące lektury</span>
     </h2>
-    <div class="book-grid" style="justify-content: center;">
-        {% for b in upcoming %}
-        <div class="card" style="border-bottom-color: #ffd87e;" onclick="openModal('{{ b.title|replace("'", "\\'") }}', '{{ b.author|replace("'", "\\'") }}', '{{ b.desc|replace("'", "\\'") }}', '{{ b.img }}')">
-            <img src="{{ b.img }}">
-            <h3>{{ b.title }}</h3>
-            <p><strong>{{ b.author }}</strong></p>
+    <div class="carousel-container">
+        <button class="nav-btn" onclick="scrollC('upcoming-c', -300)">❮</button>
+        <div class="book-carousel" id="upcoming-c">
+            {% for b in upcoming %}
+            <div class="card" onclick="openModal('{{ b.title|e }}', '{{ b.author|e }}', '{{ b.desc|e }}', '{{ b.img }}')">
+                <img src="{{ b.img }}" alt="{{ b.title }}">
+                <h3>{{ b.title }}</h3>
+                <p><strong>{{ b.author }}</strong></p>
+            </div>
+            {% endfor %}
         </div>
-        {% endfor %}
+        <button class="nav-btn" onclick="scrollC('upcoming-c', 300)">❯</button>
     </div>
 </div>
+
+<div id="bookModal" class="modal-overlay">
+    <div class="modal-box">
+        <span class="close-btn" onclick="closeModal()">&times;</span>
+        
+        <div style="text-align: center; margin-bottom: 20px;">
+            <img id="modal-img" src="" style="width: 140px; border-radius: 10px; margin-bottom: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+            <h2 id="modal-title" style="margin: 0; color: #5d4a27; font-family: 'Georgia', serif;"></h2>
+            <h4 id="modal-author" style="margin: 5px 0; color: #af8c4b; font-weight: normal; font-style: italic;"></h4>
+            <p id="modal-desc" style="font-size: 0.9em; line-height: 1.5; color: #444; margin-top: 15px; text-align: justify; padding: 0 10px;"></p>
+        </div>
+
+        <hr style="border: 0; border-top: 1px solid #f2e6c9; margin: 20px 0;">
+
+        <div style="padding: 0 10px;">
+            <h3 style="color: #5d4a27; font-size: 1.1em; margin-bottom: 15px; font-family: 'Georgia', serif;">Komentarze klubowiczów</h3>
+            
+            <div id="modal-comments" style="max-height: 200px; overflow-y: auto; margin-bottom: 20px;">
+                </div>
+
+            {% if session.get('user_id') %}
+                <form id="modal-comment-form" method="POST" action="">
+                    <textarea name="comment_text" placeholder="Napisz swoją opinię..." 
+                              style="width: 100%; height: 80px; padding: 12px; border-radius: 12px; border: 1px solid #f2e6c9; font-family: 'Georgia', serif; resize: none;" required></textarea>
+                    <button type="submit" id="submit-comment-btn" 
+                            style="background: #af8c4b; color: #fff; border: none; padding: 12px; border-radius: 25px; cursor: pointer; margin-top: 10px; width: 100%; font-weight: bold; font-family: 'Georgia', serif;">
+                        Opublikuj komentarz
+                    </button>
+                </form>
+            {% else %}
+                <div style="background: #fdfaf0; padding: 20px; border-radius: 15px; text-align: center; border: 1px dashed #af8c4b;">
+                    <p style="font-size: 0.95em; color: #5d4a27; margin: 0; font-family: 'Georgia', serif;">
+                        Chcesz przeczytać wszystkie opinie lub dodać własną? <br>
+                        <a href="{{ url_for('login') }}" style="color: #af8c4b; font-weight: bold; text-decoration: none;">Zaloguj się do klubu</a>
+                    </p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+    function scrollC(id, d) { document.getElementById(id).scrollBy({left: d, behavior: 'smooth'}); }
+
+    function openModal(title, author, desc, img) {
+    document.getElementById('modal-title').innerText = title;
+    document.getElementById('modal-author').innerText = author;
+    document.getElementById('modal-desc').innerText = desc;
+    document.getElementById('modal-img').src = img;
+    
+    const commDiv = document.getElementById('modal-comments');
+    const form = document.getElementById('modal-comment-form');
+    
+    // Zabezpieczenie: czyścimy akcję formularza na start
+    if(form) form.action = "#"; 
+    commDiv.innerHTML = '<p style="font-size: 0.8em; color: #999;">Ładowanie rozmów...</p>';
+    
+    document.getElementById('bookModal').style.display = "block";
+
+    // Używamy encodeURIComponent, żeby obsłużyć polskie znaki i apostrofy
+    fetch(`/get-book-details/${encodeURIComponent(title)}`)
+        .then(res => res.json())
+        .then(data => {
+            if(!data.error && data.id) {
+                if(form) {
+                    // Ustawiamy poprawny adres wysyłki komentarza
+                    form.action = "/add-comment/" + data.id;
+                }
+                
+                commDiv.innerHTML = data.comments.length ? data.comments.map(c => `
+                    <div class="comment-bubble">
+                        <strong style="color: #5d4a27;">${c.user}</strong> 
+                        <small style="color: #999; float: right;">${c.date}</small>
+                        <p style="margin: 5px 0 0 0; color: #444;">${c.text}</p>
+                    </div>
+                `).join('') : '<p style="font-size: 0.8em; color: #999;">Brak komentarzy. Bądź pierwszy!</p>';
+            } else {
+                commDiv.innerHTML = '<p style="font-size: 0.8em; color: #999;">Zaloguj się w Panelu i dodaj tę książkę do bazy, aby odblokować komentarze.</p>';
+            }
+        })
+        .catch(err => {
+            console.error("Błąd fetch:", err);
+            commDiv.innerHTML = '<p>Błąd połączenia z bazą.</p>';
+        });
+}
+
+    function closeModal() { document.getElementById('bookModal').style.display = "none"; }
+    window.onclick = function(event) { if (event.target == document.getElementById('bookModal')) closeModal(); }
+
+    const countDownDate = new Date("Feb 15, 2026 19:00:00").getTime();
+    setInterval(function() {
+        const now = new Date().getTime();
+        const distance = countDownDate - now;
+        if (distance < 0) return;
+        document.getElementById("days").innerHTML = Math.floor(distance / (1000 * 60 * 60 * 24));
+        document.getElementById("hours").innerHTML = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        document.getElementById("minutes").innerHTML = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        document.getElementById("seconds").innerHTML = Math.floor((distance % (1000 * 60)) / 1000);
+    }, 1000);
+
+</script>
 
 {% endblock %}
