@@ -95,28 +95,43 @@
             <h3 class="card-title">Moja Biblioteka </h3>
             
             <p class="label-style" style="font-size: 0.75em;">NA LIŚCIE (Z FORUM):</p>
-            <div class="book-grid" style="margin-bottom: 25px;">
-                {% for p in user_books if p.status == 'na liste' or p.status == 'Do przeczytania' or p.status == 'W trakcie' %}
-                    <div style="text-align: center;">
-                        <img src="{{ p.book.thumbnail }}" class="book-cover" alt="okładka">
-                        <div style="font-size: 0.8em; font-weight: bold; color: var(--dark-gold); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ p.book.title }}</div>
-                        <form action="{{ url_for('delete_progress', progress_id=p.id) }}" method="POST" style="margin-top: 5px;">
+            <div class="book-grid" style="margin-bottom: 35px; display: flex; flex-wrap: wrap; gap: 25px 15px;">
+                {% for p in user_books if p.status in ['na liste', 'Do przeczytania', 'W trakcie'] %}
+                    <div style="width: 110px; display: flex; flex-direction: column; align-items: center; text-align: center; cursor: pointer; min-height: 250px;" onclick="showBookInfo('{{ p.book.title }}')">
+                        <img src="{{ p.book.thumbnail }}" class="book-cover" alt="okładka" style="height: 160px; width: 100%; object-fit: cover; margin-bottom: 10px;">
+                        
+                        <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 4px; width: 100%;">
+                            <div style="font-size: 0.85em; font-weight: bold; color: var(--dark-gold); line-height: 1.2;">
+                                {{ p.book.title }}
+                            </div>
+                        </div>
+
+                        <form action="{{ url_for('delete_progress', progress_id=p.id) }}" method="POST" style="margin-top: 10px;">
                             <button type="submit" style="background: none; border: none; color: #cc0000; cursor: pointer; font-size: 0.7em; text-decoration: underline;">usuń 🗑️</button>
                         </form>
                     </div>
                 {% else %}
-                    <p style="font-size: 0.85em; color: #999; font-style: italic;">Brak książek.</p>
+                    <p style="font-size: 0.85em; color: #999; font-style: italic; width: 100%;">Brak książek.</p>
                 {% endfor %}
             </div>
 
             <p class="label-style" style="font-size: 0.75em;">UKOŃCZONE:</p>
-            <div class="book-grid">
-                {% for p in user_books if p.status == 'Przeczytane' or p.status == 'przeczytane' %}
-                    <div style="text-align: center;">
-                        <img src="{{ p.book.thumbnail }}" class="book-cover" style="opacity: 0.8;" alt="okładka">
-                        <div style="font-size: 0.8em; font-weight: bold; color: var(--dark-gold); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ p.book.title }}</div>
-                        <form action="{{ url_for('delete_progress', progress_id=p.id) }}" method="POST" style="margin-top: 5px;">
-                            <button type="submit" style="background: none; border: none; color: #cc0000; cursor: pointer; font-size: 0.7em; text-decoration: underline;">usuń </button>
+            <div class="book-grid" style="display: flex; flex-wrap: wrap; gap: 25px 15px;">
+                {% for p in user_books if p.status in ['Przeczytane', 'przeczytane'] %}
+                    <div style="width: 110px; display: flex; flex-direction: column; align-items: center; text-align: center; cursor: pointer; min-height: 270px;" onclick="showBookInfo('{{ p.book.title }}')">
+                        <img src="{{ p.book.thumbnail }}" class="book-cover" style="opacity: 0.8; height: 160px; width: 100%; object-fit: cover; margin-bottom: 10px;" alt="okładka">
+                        
+                        <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 5px; width: 100%;">
+                            <div style="font-size: 0.85em; font-weight: bold; color: var(--dark-gold); line-height: 1.2;">
+                                {{ p.book.title }}
+                            </div>
+                            <div style="font-size: 0.75em; color: #7a6a4a; font-style: italic;">
+                                {{ p.book.author }}
+                            </div>
+                        </div>
+
+                        <form action="{{ url_for('delete_progress', progress_id=p.id) }}" method="POST" style="margin-top: 10px;">
+                            <button type="submit" style="background: none; border: none; color: #cc0000; cursor: pointer; font-size: 0.7em; text-decoration: underline;">usuń</button>
                         </form>
                     </div>
                 {% endfor %}

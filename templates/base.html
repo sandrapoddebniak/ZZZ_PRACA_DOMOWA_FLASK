@@ -123,30 +123,164 @@
 <div id="bookModal" class="modal">
     <div class="modal-content">
         <span class="close" onclick="closeModal()">&times;</span>
-        <div style="display:flex; gap:25px; flex-wrap: wrap;">
-            <img id="modalImg" style="width:200px; border-radius:10px;">
+        
+        <div style="display:flex; gap:25px; flex-wrap: wrap; align-items: flex-start;">
+            <img id="modalImg" style="width:200px; border-radius:10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
             <div style="flex: 1; min-width: 280px;">
                 <h2 id="modalTitle" style="color:var(--gold); margin: 0;"></h2>
-                <strong id="modalAuthor" style="color: #888;"></strong>
-                <div id="modalDesc" style="margin-top: 15px;"></div>
-                <div id="modalComments"></div>
+                <strong id="modalAuthor" style="color: #888; display: block; margin-bottom: 10px;"></strong>
+                <div id="modalDesc" style="line-height: 1.6; color: #444;"></div>
             </div>
+        </div>
+
+        <hr style="border: 0; border-top: 1px solid var(--light-beige); margin: 25px 0;">
+
+        <div id="modalCommentsArea">
+            <h4 style="color: var(--gold); margin-bottom: 15px;">Komentarze klubowiczów:</h4>
+            <div id="modalCommentsList" style="max-height: 300px; overflow-y: auto; margin-bottom: 20px;">
+                </div>
+            
+            <div id="modalFormContainer"></div>
         </div>
     </div>
 </div>
 
 <footer><strong>Sandi's Book Club</strong> © 2026</footer>
 
+<div id="bookModal" class="modal" style="display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.7); align-items: center; justify-content: center;">
+    <div class="modal-content" style="background-color: #fffcf5; padding: 30px; border-radius: 15px; width: 90%; max-width: 800px; max-height: 90vh; overflow-y: auto; position: relative;">
+        <span class="close" onclick="closeModal()" style="position: absolute; right: 20px; top: 10px; font-size: 28px; cursor: pointer; color: #aaa;">&times;</span>
+        </div>
+</div>
+
 <script>
-function openModal(title, author, desc, img) {
-    document.getElementById('modalTitle').textContent = title;
-    document.getElementById('modalAuthor').textContent = author;
-    document.getElementById('modalDesc').innerHTML = desc;
-    document.getElementById('modalImg').src = img;
-    document.getElementById('bookModal').style.display = "flex";
+/**
+ * Otwiera modal i pobiera dane o książce oraz komentarze
+ */
+function openBookModal(title) {
+    // encodeURIComponent chroni przed błędami przy tytułach ze spacjami/znakami specjalnymi
+    fetch('/get-book-details/' + encodeURIComponent(title))
+    .then(response => {
+        if (!response.ok) throw new Error('Błąd pobierania danych');
+        return response.json();
+    })
+    .then(data => {
+        if(data.error) return;
+
+        // Budujemy zawartość HTML modala
+        let htmlContent = `
+            <div style="display: flex; gap: 30px; flex-wrap: wrap; align-items: flex-start;">
+                <div style="flex: 0 0 200px;">
+                    <img src="${data.thumbnail}" style="width: 100%; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                </div>
+                <div style="flex: 1; min-width: 300px;">
+                    <h2 style="color: var(--gold); margin-top: 0;">${data.title}</h2>
+                    <p style="color: #666; font-weight: bold;">${data.author}</p>
+                    <div style="line-height: 1.6; color: #444; margin-top: 15px; font-size: 0.95em;">${data.description}</div>
+                </div>
+            </div>
+            
+            <hr style="border: 0; border-top: 1px solid #eee; margin: 30px 0;">
+            
+            <div id="commentsContainer">
+                <h4 style="color: var(--gold); margin-bottom: 15px;">Komentarze klubowiczów:</h4>
+                <div id="commentsList" style="max-height: 250px; overflow-y: auto; padding-right: 10px;">
+                    ${data.comments.map(c => `
+                        <div style="border-bottom: 1px solid #f0f0f0; padding: 12px 0;">
+                            <strong style="color: var(--dark-gold);">${c.user}</strong> 
+                            <small style="color: #999; float: right;">${c.date}</small>
+                            <p style="margin: 5px 0; font-style: italic; font-size: 0.9em;">"${c.text}"</p>
+                        </div>
+                    `).join('') || '<p id="noComments" style="color:#999; font-style:italic;">Brak komentarzy. Bądź pierwszy!</p>'}
+                </div>
+            </div>
+
+            {% if session.get('user_id') %}
+            <div id="commentStatus" style="display:none; color: #155724; font-weight: bold; margin-top: 15px; padding: 12px; background: #d4edda; border-radius: 8px; border: 1px solid #c3e6cb;">
+                ✓ Twój komentarz został dodany!
+            </div>
+            <form id="ajaxCommentForm" onsubmit="submitComment(event, ${data.id})" style="margin-top: 20px;">
+                <label style="font-size: 0.8em; font-weight: bold; color: var(--dark-gold); display: block; margin-bottom: 5px;">DODAJ SWÓJ KOMENTARZ:</label>
+                <textarea name="comment_text" id="commentField" placeholder="Napisz coś o tej książce..." required 
+                    style="width: 100%; height: 80px; padding: 12px; border: 1px solid var(--light-beige); border-radius: 8px; font-family: inherit; resize: none;"></textarea>
+                <button type="submit" class="dashboard-btn" style="margin-top: 10px; width: auto; padding: 10px 30px; cursor: pointer;">DODAJ KOMENTARZ</button>
+            </form>
+            {% else %}
+            <div style="margin-top: 20px; padding: 15px; background: #f9f9f9; border-radius: 8px; text-align: center;">
+                <p style="color: #888; font-size: 0.9em; margin: 0;">Zaloguj się, aby brać udział w dyskusji.</p>
+            </div>
+            {% endif %}
+        `;
+
+        // Renderujemy HTML do środka modala
+        const modalContent = document.querySelector('.modal-content');
+        modalContent.innerHTML = `<span class="close" onclick="closeModal()" style="position: absolute; right: 20px; top: 10px; font-size: 28px; cursor: pointer; color: #aaa;">&times;</span>${htmlContent}`;
+        
+        // Pokazujemy modal jako flex
+        document.getElementById('bookModal').style.display = "flex";
+    })
+    .catch(err => console.error("Błąd sieci lub serwera:", err));
 }
-function closeModal() { document.getElementById('bookModal').style.display = "none"; }
-window.onclick = function(event) { if (event.target == document.getElementById('bookModal')) closeModal(); }
+
+/**
+ * Wysyła komentarz przez AJAX (bez przeładowania strony)
+ */
+function submitComment(event, bookId) {
+    event.preventDefault();
+    const textField = document.getElementById('commentField');
+    const statusBox = document.getElementById('commentStatus');
+    const formData = new FormData();
+    formData.append('comment_text', textField.value);
+
+    // Wysyłka do trasy AJAX (upewnij się, że masz ją w app.py)
+    fetch('/add-comment-ajax/' + bookId, {
+        method: 'POST',
+        body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+        if(data.status === 'success') {
+            // Pokazujemy zielony pasek sukcesu
+            statusBox.style.display = 'block';
+            
+            // Dodajemy nowy komentarz na samą górę listy wizualnie
+            const list = document.getElementById('commentsList');
+            const noMsg = document.getElementById('noComments');
+            if(noMsg) noMsg.remove();
+
+            const newComment = `
+                <div style="border-bottom: 1px solid #f0f0f0; padding: 12px 0; background: #fffdf5; transition: background 1s;">
+                    <strong style="color:var(--dark-gold);">${data.user}</strong> 
+                    <small style="color: #999; float: right;">${data.date}</small>
+                    <p style="margin: 5px 0; font-style: italic; font-size: 0.9em;">"${data.text}"</p>
+                </div>
+            `;
+            list.insertAdjacentHTML('afterbegin', newComment);
+            
+            // Czyścimy pole tekstowe
+            textField.value = '';
+            
+            // Ukrywamy status po 3 sekundach
+            setTimeout(() => { 
+                if(statusBox) statusBox.style.display = 'none'; 
+            }, 3000);
+        }
+    })
+    .catch(err => {
+        alert("Błąd połączenia. Upewnij się, że jesteś zalogowana.");
+        console.error(err);
+    });
+}
+
+function closeModal() {
+    document.getElementById('bookModal').style.display = "none";
+}
+
+// Obsługa kliknięcia poza obszar modala
+window.onclick = function(event) {
+    const modal = document.getElementById('bookModal');
+    if (event.target == modal) {
+        closeModal();
+    }
+}
 </script>
-</body>
-</html>

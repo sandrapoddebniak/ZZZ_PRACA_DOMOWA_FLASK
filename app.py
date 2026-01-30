@@ -126,6 +126,10 @@ def get_book_details(title):
     comments = Comment.query.filter_by(book_id=book.id).order_by(Comment.date.desc()).all()
     return jsonify({
         "id": book.id,
+        "description": book.description,  
+        "title": book.title,              
+        "author": book.author,  
+        "thumbnail": book.thumbnail,          
         "comments": [{"user": c.user_name, "text": c.text, "date": c.date.strftime('%d.%m.%Y %H:%M')} for c in comments]
     })
 
@@ -230,17 +234,22 @@ def dashboard():
                            available_titles=combined_titles,
                            all_messages=all_messages)
 
-@app.route('/add-comment/<int:book_id>', methods=['POST'])
+@app.route('/add-comment-ajax/<int:book_id>', methods=['POST'])
 @login_required
-def add_comment(book_id):
+def add_comment_ajax(book_id):
     text = request.form.get('comment_text', '').strip()
     if text:
         new_comment = Comment(text=text, user_id=session['user_id'], 
                               user_name=session['user'], book_id=book_id)
         db.session.add(new_comment)
         db.session.commit()
-        flash('Komentarz został dodany!', 'success')
-    return redirect(request.referrer or url_for('dashboard'))
+        return jsonify({
+            "status": "success",
+            "user": session['user'],
+            "date": datetime.now().strftime('%d.%m.%Y %H:%M'),
+            "text": text
+        })
+    return jsonify({"status": "error"}), 400
 
 @app.route('/forum', methods=['GET', 'POST'])
 @login_required
