@@ -241,6 +241,8 @@
     document.getElementById('modal-author').innerText = author;
     document.getElementById('modal-desc').innerText = desc;
     document.getElementById('modal-img').src = img;
+    document.getElementById('bookModal').style.display = "block";
+}
     
     const commDiv = document.getElementById('modal-comments');
     const form = document.getElementById('modal-comment-form');
@@ -293,5 +295,42 @@
     }, 1000);
 
 </script>
+
+<script>
+    // 1. Funkcja do przewijania karuzeli (zostawiamy bez zmian)
+    function scrollC(id, d) { 
+        document.getElementById(id).scrollBy({left: d, behavior: 'smooth'}); 
+    }
+
+    // 2. SILNIK ZEGARA
+    // Ustawiamy datę spotkania: 15 lutego 2026, godzina 19:00
+    const countDownDate = new Date("Feb 15, 2026 19:00:00").getTime();
+
+    // Aktualizacja co 1 sekundę
+    const timerInterval = setInterval(function() {
+        const now = new Date().getTime();
+        const distance = countDownDate - now;
+
+        // Jeśli data minęła
+        if (distance < 0) {
+            clearInterval(timerInterval);
+            document.getElementById("timer").innerHTML = "SPOTKANIE W TRAKCIE!";
+            return;
+        }
+
+        // Obliczenia dla dni, godzin, minut i sekund
+        const d = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const s = Math.floor((distance % (1000 * 60)) / 1000);
+
+        // Wstawienie liczb do Twojego HTML
+        document.getElementById("days").innerHTML = d.toString().padStart(2, '0');
+        document.getElementById("hours").innerHTML = h.toString().padStart(2, '0');
+        document.getElementById("minutes").innerHTML = m.toString().padStart(2, '0');
+        document.getElementById("seconds").innerHTML = s.toString().padStart(2, '0');
+    }, 1000);
+</script>
+
 
 {% endblock %}
